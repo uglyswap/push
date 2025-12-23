@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
 	"sync"
-	"syscall"
 )
 
 // ShellProcess represents a background shell process.
@@ -97,8 +97,12 @@ func (m *ShellManager) Kill(id string) error {
 
 // KillByPID kills a process by PID.
 func (m *ShellManager) KillByPID(pid int) error {
-	// Try to kill the process directly
-	return syscall.Kill(pid, syscall.SIGTERM)
+	// Try to kill the process using os.Process (cross-platform)
+	proc, err := os.FindProcess(pid)
+	if err != nil {
+		return fmt.Errorf("failed to find process: %w", err)
+	}
+	return proc.Kill()
 }
 
 // KillShellTool kills background shell processes.
