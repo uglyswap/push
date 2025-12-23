@@ -173,9 +173,11 @@ func (a *sessionAgent) Run(ctx context.Context, call SessionAgentCall) (*fantasy
 	// Generate title if first message.
 	if len(msgs) == 0 {
 		titleCtx := ctx // Copy to avoid race with ctx reassignment below.
-		wg.Go(func() {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
 			a.generateTitle(titleCtx, call.SessionID, call.Prompt)
-		})
+		}()
 	}
 
 	// Add the user message to the session.
