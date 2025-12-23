@@ -1,7 +1,7 @@
 package editor
 
 import (
-	"charm.land/bubbles/v2/key"
+	"github.com/charmbracelet/bubbles/key"
 )
 
 type EditorKeyMap struct {
