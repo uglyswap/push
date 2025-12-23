@@ -3,8 +3,8 @@ package util
 import (
 	"context"
 
-	tea "charm.land/bubbletea/v2"
-	"github.com/charmbracelet/crush/internal/uiutil"
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/uglyswap/crush/internal/uiutil"
 )
 
 // ExecShell parses a shell command string and executes it with exec.Command.

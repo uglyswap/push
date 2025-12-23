@@ -1,11 +1,21 @@
 package util
 
 import (
-	tea "charm.land/bubbletea/v2"
-	"github.com/charmbracelet/crush/internal/uiutil"
+	tea "github.com/charmbracelet/bubbletea"
+	compat_tea "github.com/uglyswap/crush/internal/compat/bubbletea"
+	"github.com/uglyswap/crush/internal/uiutil"
 )
 
-type Cursor = uiutil.Cursor
+// CursorState is the uiutil Cursor type (Mode, Style).
+type CursorState = uiutil.Cursor
+
+// Cursor is a position-based cursor with X and Y coordinates.
+type Cursor = compat_tea.Cursor
+
+// CursorProvider is an interface for components that provide cursor information.
+type CursorProvider interface {
+	Cursor() *Cursor
+}
 
 type Model interface {
 	Init() tea.Cmd
