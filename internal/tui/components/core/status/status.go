@@ -3,11 +3,11 @@ package status
 import (
 	"time"
 
-	"charm.land/bubbles/v2/help"
-	tea "charm.land/bubbletea/v2"
-	"charm.land/lipgloss/v2"
-	"github.com/charmbracelet/crush/internal/tui/styles"
-	"github.com/charmbracelet/crush/internal/tui/util"
+	"github.com/charmbracelet/bubbles/help"
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
+	"github.com/uglyswap/crush/internal/tui/styles"
+	"github.com/uglyswap/crush/internal/tui/util"
 	"github.com/charmbracelet/x/ansi"
 )
 
@@ -40,7 +40,7 @@ func (m *statusCmp) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
-		m.help.SetWidth(msg.Width - 2)
+		m.help.Width = msg.Width - 2
 		return m, nil
 
 	// Handle status info
@@ -72,24 +72,24 @@ func (m *statusCmp) infoMsg() string {
 	infoType := ""
 	switch m.info.Type {
 	case util.InfoTypeError:
-		infoType = t.S().Base.Background(t.Red).Padding(0, 1).Render("ERROR")
+		infoType = t.S().Base.Background(styles.TC(t.Red)).Padding(0, 1).Render("ERROR")
 		widthLeft := m.width - (lipgloss.Width(infoType) + 2)
 		info := ansi.Truncate(m.info.Msg, widthLeft, "…")
-		message = t.S().Base.Background(t.Error).Width(widthLeft+2).Foreground(t.White).Padding(0, 1).Render(info)
+		message = t.S().Base.Background(styles.TC(t.Error)).Width(widthLeft+2).Foreground(styles.TC(t.White)).Padding(0, 1).Render(info)
 	case util.InfoTypeWarn:
-		infoType = t.S().Base.Foreground(t.BgOverlay).Background(t.Yellow).Padding(0, 1).Render("WARNING")
+		infoType = t.S().Base.Foreground(styles.TC(t.BgOverlay)).Background(styles.TC(t.Yellow)).Padding(0, 1).Render("WARNING")
 		widthLeft := m.width - (lipgloss.Width(infoType) + 2)
 		info := ansi.Truncate(m.info.Msg, widthLeft, "…")
-		message = t.S().Base.Foreground(t.BgOverlay).Width(widthLeft+2).Background(t.Warning).Padding(0, 1).Render(info)
+		message = t.S().Base.Foreground(styles.TC(t.BgOverlay)).Width(widthLeft+2).Background(styles.TC(t.Warning)).Padding(0, 1).Render(info)
 	default:
 		note := "OKAY!"
 		if m.info.Type == util.InfoTypeUpdate {
 			note = "HEY!"
 		}
-		infoType = t.S().Base.Foreground(t.BgSubtle).Background(t.Green).Padding(0, 1).Bold(true).Render(note)
+		infoType = t.S().Base.Foreground(styles.TC(t.BgSubtle)).Background(styles.TC(t.Green)).Padding(0, 1).Bold(true).Render(note)
 		widthLeft := m.width - (lipgloss.Width(infoType) + 2)
 		info := ansi.Truncate(m.info.Msg, widthLeft, "…")
-		message = t.S().Base.Background(t.GreenDark).Width(widthLeft+2).Foreground(t.BgSubtle).Padding(0, 1).Render(info)
+		message = t.S().Base.Background(styles.TC(t.GreenDark)).Width(widthLeft+2).Foreground(styles.TC(t.BgSubtle)).Padding(0, 1).Render(info)
 	}
 	return ansi.Truncate(infoType+message, m.width, "…")
 }

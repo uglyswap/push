@@ -4,12 +4,12 @@ import (
 	"image/color"
 	"strings"
 
-	"charm.land/bubbles/v2/help"
-	"charm.land/bubbles/v2/key"
-	"charm.land/lipgloss/v2"
+	"github.com/charmbracelet/bubbles/help"
+	"github.com/charmbracelet/bubbles/key"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/alecthomas/chroma/v2"
-	"github.com/charmbracelet/crush/internal/tui/exp/diffview"
-	"github.com/charmbracelet/crush/internal/tui/styles"
+	"github.com/uglyswap/crush/internal/tui/exp/diffview"
+	"github.com/uglyswap/crush/internal/tui/styles"
 	"github.com/charmbracelet/x/ansi"
 )
 
@@ -44,7 +44,7 @@ func Section(text string, width int) string {
 	char := "─"
 	length := lipgloss.Width(text) + 1
 	remainingWidth := width - length
-	lineStyle := t.S().Base.Foreground(t.Border)
+	lineStyle := t.S().Base.Foreground(styles.TC(t.Border))
 	if remainingWidth > 0 {
 		text = text + " " + lineStyle.Render(strings.Repeat(char, remainingWidth))
 	}
@@ -60,7 +60,7 @@ func SectionWithInfo(text string, width int, info string) string {
 	if info != "" {
 		remainingWidth -= lipgloss.Width(info) + 1 // 1 for the space before info
 	}
-	lineStyle := t.S().Base.Foreground(t.Border)
+	lineStyle := t.S().Base.Foreground(styles.TC(t.Border))
 	if remainingWidth > 0 {
 		text = text + " " + lineStyle.Render(strings.Repeat(char, remainingWidth)) + " " + info
 	}
@@ -72,7 +72,7 @@ func Title(title string, width int) string {
 	char := "╱"
 	length := lipgloss.Width(title) + 1
 	remainingWidth := width - length
-	titleStyle := t.S().Base.Foreground(t.Primary)
+	titleStyle := t.S().Base.Foreground(styles.TC(t.Primary))
 	if remainingWidth > 0 {
 		lines := strings.Repeat(char, remainingWidth)
 		lines = styles.ApplyForegroundGrad(lines, t.Primary, t.Secondary)
@@ -103,14 +103,14 @@ func Status(opts StatusOpts, width int) string {
 	if opts.DescriptionColor != nil {
 		descriptionColor = opts.DescriptionColor
 	}
-	title = t.S().Base.Foreground(titleColor).Render(title)
+	title = t.S().Base.Foreground(styles.TC(titleColor)).Render(title)
 	if description != "" {
 		extraContentWidth := lipgloss.Width(opts.ExtraContent)
 		if extraContentWidth > 0 {
 			extraContentWidth += 1
 		}
 		description = ansi.Truncate(description, width-lipgloss.Width(icon)-lipgloss.Width(title)-2-extraContentWidth, "…")
-		description = t.S().Base.Foreground(descriptionColor).Render(description)
+		description = t.S().Base.Foreground(styles.TC(descriptionColor)).Render(description)
 	}
 
 	content := []string{}
@@ -143,9 +143,9 @@ func SelectableButton(opts ButtonOpts) string {
 
 	// Apply selection styling
 	if opts.Selected {
-		buttonStyle = buttonStyle.Foreground(t.White).Background(t.Secondary)
+		buttonStyle = buttonStyle.Foreground(styles.TC(t.White)).Background(styles.TC(t.Secondary))
 	} else {
-		buttonStyle = buttonStyle.Background(t.BgSubtle)
+		buttonStyle = buttonStyle.Background(styles.TC(t.BgSubtle))
 	}
 
 	// Create the button text with underlined character

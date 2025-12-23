@@ -11,12 +11,12 @@ import (
 
 	"github.com/zeebo/xxh3"
 
-	tea "charm.land/bubbletea/v2"
-	"charm.land/lipgloss/v2"
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/lucasb-eyer/go-colorful"
 
-	"github.com/charmbracelet/crush/internal/csync"
-	"github.com/charmbracelet/crush/internal/tui/util"
+	"github.com/uglyswap/crush/internal/csync"
+	"github.com/uglyswap/crush/internal/tui/util"
 )
 
 const (
@@ -195,7 +195,7 @@ func New(opts Settings) *Anim {
 				// Also prerender the initial character with Lip Gloss to avoid
 				// processing in the render loop.
 				a.initialFrames[i][j] = lipgloss.NewStyle().
-					Foreground(c).
+					Foreground(colorToTermColor(c)).
 					Render(string(initialChar))
 			}
 			if opts.CycleColors {
@@ -217,7 +217,7 @@ func New(opts Settings) *Anim {
 				// in the render loop.
 				r := availableRunes[rand.IntN(len(availableRunes))]
 				a.cyclingFrames[i][j] = lipgloss.NewStyle().
-					Foreground(ramp[j+offset]).
+					Foreground(colorToTermColor(ramp[j+offset])).
 					Render(string(r))
 			}
 			if opts.CycleColors {
@@ -276,7 +276,7 @@ func (a *Anim) renderLabel(label string) {
 		a.label = csync.NewSlice[string]()
 		for i := range labelRunes {
 			rendered := lipgloss.NewStyle().
-				Foreground(a.labelColor).
+				Foreground(colorToTermColor(a.labelColor)).
 				Render(string(labelRunes[i]))
 			a.label.Append(rendered)
 		}
@@ -285,7 +285,7 @@ func (a *Anim) renderLabel(label string) {
 		a.ellipsisFrames = csync.NewSlice[string]()
 		for _, frame := range ellipsisFrames {
 			rendered := lipgloss.NewStyle().
-				Foreground(a.labelColor).
+				Foreground(colorToTermColor(a.labelColor)).
 				Render(frame)
 			a.ellipsisFrames.Append(rendered)
 		}
@@ -436,6 +436,20 @@ func makeGradientRamp(size int, stops ...color.Color) []color.Color {
 	}
 
 	return blended
+}
+
+// colorToTermColor converts a color.Color to lipgloss.TerminalColor for use with lipgloss methods.
+func colorToTermColor(c color.Color) lipgloss.TerminalColor {
+	if c == nil {
+		return lipgloss.NoColor{}
+	}
+	// If it has a Hex method (like charmtone.Color), use it directly
+	if hex, ok := c.(interface{ Hex() string }); ok {
+		return lipgloss.Color(hex.Hex())
+	}
+	// Otherwise convert via RGBA
+	r, g, b, _ := c.RGBA()
+	return lipgloss.Color(fmt.Sprintf("#%02x%02x%02x", r>>8, g>>8, b>>8))
 }
 
 func colorIsUnset(c color.Color) bool {

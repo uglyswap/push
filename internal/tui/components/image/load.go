@@ -13,7 +13,7 @@ import (
 	"os"
 	"strings"
 
-	tea "charm.land/bubbletea/v2"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/disintegration/imageorient"
 	"github.com/lucasb-eyer/go-colorful"
 	"github.com/muesli/termenv"

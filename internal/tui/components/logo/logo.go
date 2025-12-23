@@ -6,9 +6,9 @@ import (
 	"image/color"
 	"strings"
 
-	"charm.land/lipgloss/v2"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/MakeNowJust/heredoc"
-	"github.com/charmbracelet/crush/internal/tui/styles"
+	"github.com/uglyswap/crush/internal/tui/styles"
 	"github.com/charmbracelet/x/ansi"
 	"github.com/charmbracelet/x/exp/slice"
 )
@@ -38,7 +38,7 @@ func Render(version string, compact bool, o Opts) string {
 	const charm = " Charm™"
 
 	fg := func(c color.Color, s string) string {
-		return lipgloss.NewStyle().Foreground(c).Render(s)
+		return lipgloss.NewStyle().Foreground(styles.TC(c)).Render(s)
 	}
 
 	// Title.
@@ -119,12 +119,12 @@ func Render(version string, compact bool, o Opts) string {
 // smaller windows or sidebar usage.
 func SmallRender(width int) string {
 	t := styles.CurrentTheme()
-	title := t.S().Base.Foreground(t.Secondary).Render("Charm™")
+	title := t.S().Base.Foreground(styles.TC(t.Secondary)).Render("Charm™")
 	title = fmt.Sprintf("%s %s", title, styles.ApplyBoldForegroundGrad("Crush", t.Secondary, t.Primary))
 	remainingWidth := width - lipgloss.Width(title) - 1 // 1 for the space after "Crush"
 	if remainingWidth > 0 {
 		lines := strings.Repeat("╱", remainingWidth)
-		title = fmt.Sprintf("%s %s", title, t.S().Base.Foreground(t.Primary).Render(lines))
+		title = fmt.Sprintf("%s %s", title, t.S().Base.Foreground(styles.TC(t.Primary)).Render(lines))
 	}
 	return title
 }
