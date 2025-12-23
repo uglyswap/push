@@ -12,6 +12,7 @@ import (
 	"context"
 	_ "embed"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -21,22 +22,22 @@ import (
 	"sync"
 	"time"
 
-	"charm.land/fantasy"
-	"charm.land/fantasy/providers/anthropic"
-	"charm.land/fantasy/providers/bedrock"
-	"charm.land/fantasy/providers/google"
-	"charm.land/fantasy/providers/openai"
-	"charm.land/fantasy/providers/openrouter"
-	"charm.land/lipgloss/v2"
-	"github.com/charmbracelet/catwalk/pkg/catwalk"
-	"github.com/charmbracelet/crush/internal/agent/hyper"
-	"github.com/charmbracelet/crush/internal/agent/tools"
-	"github.com/charmbracelet/crush/internal/config"
-	"github.com/charmbracelet/crush/internal/csync"
-	"github.com/charmbracelet/crush/internal/message"
-	"github.com/charmbracelet/crush/internal/permission"
-	"github.com/charmbracelet/crush/internal/session"
-	"github.com/charmbracelet/crush/internal/stringext"
+	"github.com/uglyswap/crush/internal/compat/lipgloss"
+	"github.com/uglyswap/crush/internal/agent/hyper"
+	"github.com/uglyswap/crush/internal/agent/tools"
+	"github.com/uglyswap/crush/internal/catwalk"
+	"github.com/uglyswap/crush/internal/config"
+	"github.com/uglyswap/crush/internal/csync"
+	"github.com/uglyswap/crush/internal/message"
+	"github.com/uglyswap/crush/internal/permission"
+	"github.com/uglyswap/crush/internal/session"
+	"github.com/uglyswap/crush/internal/stringext"
+	"github.com/uglyswap/crush/pkg/fantasy"
+	"github.com/uglyswap/crush/pkg/fantasy/providers/anthropic"
+	"github.com/uglyswap/crush/pkg/fantasy/providers/bedrock"
+	"github.com/uglyswap/crush/pkg/fantasy/providers/google"
+	"github.com/uglyswap/crush/pkg/fantasy/providers/openai"
+	"github.com/uglyswap/crush/pkg/fantasy/providers/openrouter"
 )
 
 //go:embed templates/title.md
@@ -457,12 +458,12 @@ func (a *sessionAgent) Run(ctx context.Context, call SessionAgentCall) (*fantasy
 			currentAssistant.AddFinish(message.FinishReasonPermissionDenied, "User denied permission", "")
 		} else if errors.Is(err, hyper.ErrNoCredits) {
 			url := hyper.BaseURL()
-			link := lipgloss.NewStyle().Hyperlink(url, "id=hyper").Render(url)
+			link := lipgloss.NewHyperlinkStyle().Hyperlink(url, "id=hyper").Render(url)
 			currentAssistant.AddFinish(message.FinishReasonError, "No credits", "You're out of credits. Add more at "+link)
 		} else if errors.As(err, &providerErr) {
 			if providerErr.Message == "The requested model is not supported." {
 				url := "https://github.com/settings/copilot/features"
-				link := lipgloss.NewStyle().Hyperlink(url, "id=hyper").Render(url)
+				link := lipgloss.NewHyperlinkStyle().Hyperlink(url, "id=hyper").Render(url)
 				currentAssistant.AddFinish(
 					message.FinishReasonError,
 					"Copilot model not enabled",
@@ -955,10 +956,17 @@ func (a *sessionAgent) isClaudeCode() bool {
 
 // convertToToolResult converts a fantasy tool result to a message tool result.
 func (a *sessionAgent) convertToToolResult(result fantasy.ToolResultContent) message.ToolResult {
+	// Convert ClientMetadata map to JSON string
+	var metadataStr string
+	if result.ClientMetadata != nil {
+		if data, err := json.Marshal(result.ClientMetadata); err == nil {
+			metadataStr = string(data)
+		}
+	}
 	baseResult := message.ToolResult{
 		ToolCallID: result.ToolCallID,
 		Name:       result.ToolName,
-		Metadata:   result.ClientMetadata,
+		Metadata:   metadataStr,
 	}
 
 	switch result.Result.GetType() {
