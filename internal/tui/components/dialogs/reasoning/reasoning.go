@@ -1,19 +1,19 @@
 package reasoning
 
 import (
-	"charm.land/bubbles/v2/help"
-	"charm.land/bubbles/v2/key"
-	tea "charm.land/bubbletea/v2"
-	"charm.land/lipgloss/v2"
+	"github.com/charmbracelet/bubbles/help"
+	"github.com/charmbracelet/bubbles/key"
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 
-	"github.com/charmbracelet/crush/internal/config"
-	"github.com/charmbracelet/crush/internal/tui/components/core"
-	"github.com/charmbracelet/crush/internal/tui/components/dialogs"
-	"github.com/charmbracelet/crush/internal/tui/exp/list"
-	"github.com/charmbracelet/crush/internal/tui/styles"
-	"github.com/charmbracelet/crush/internal/tui/util"
+	"github.com/uglyswap/crush/internal/config"
+	"github.com/uglyswap/crush/internal/tui/components/core"
+	"github.com/uglyswap/crush/internal/tui/components/dialogs"
+	"github.com/uglyswap/crush/internal/tui/exp/list"
+	"github.com/uglyswap/crush/internal/tui/styles"
+	"github.com/uglyswap/crush/internal/tui/util"
 )
 
 const (
@@ -174,7 +174,7 @@ func (r *reasoningDialogCmp) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 		r.wWidth = msg.Width
 		r.wHeight = msg.Height
 		return r, r.effortList.SetSize(r.listWidth(), r.listHeight())
-	case tea.KeyPressMsg:
+	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, r.keyMap.Select):
 			selectedItem := r.effortList.SelectedItem()
@@ -216,9 +216,9 @@ func (r *reasoningDialogCmp) View() string {
 	return r.style().Render(content)
 }
 
-func (r *reasoningDialogCmp) Cursor() *tea.Cursor {
-	if cursor, ok := r.effortList.(util.Cursor); ok {
-		cursor := cursor.Cursor()
+func (r *reasoningDialogCmp) Cursor() *util.Cursor {
+	if cursorProvider, ok := r.effortList.(util.CursorProvider); ok {
+		cursor := cursorProvider.Cursor()
 		if cursor != nil {
 			cursor = r.moveCursor(cursor)
 		}
@@ -236,7 +236,7 @@ func (r *reasoningDialogCmp) listHeight() int {
 	return min(listHeight, r.wHeight/2)
 }
 
-func (r *reasoningDialogCmp) moveCursor(cursor *tea.Cursor) *tea.Cursor {
+func (r *reasoningDialogCmp) moveCursor(cursor *util.Cursor) *util.Cursor {
 	row, col := r.Position()
 	offset := row + 3
 	cursor.Y += offset
@@ -249,7 +249,7 @@ func (r *reasoningDialogCmp) style() lipgloss.Style {
 	return t.S().Base.
 		Width(r.width).
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(t.BorderFocus)
+		BorderForeground(styles.TC(t.BorderFocus))
 }
 
 func (r *reasoningDialogCmp) Position() (int, int) {
