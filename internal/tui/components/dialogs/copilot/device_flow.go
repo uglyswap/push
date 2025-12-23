@@ -6,13 +6,14 @@ import (
 	"fmt"
 	"time"
 
-	"charm.land/bubbles/v2/spinner"
-	tea "charm.land/bubbletea/v2"
-	"charm.land/lipgloss/v2"
-	"github.com/charmbracelet/crush/internal/oauth"
-	"github.com/charmbracelet/crush/internal/oauth/copilot"
-	"github.com/charmbracelet/crush/internal/tui/styles"
-	"github.com/charmbracelet/crush/internal/tui/util"
+	"github.com/charmbracelet/bubbles/spinner"
+	tea "github.com/charmbracelet/bubbletea"
+	compat_tea "github.com/uglyswap/crush/internal/compat/bubbletea"
+	"github.com/uglyswap/crush/internal/compat/lipgloss"
+	"github.com/uglyswap/crush/internal/oauth"
+	"github.com/uglyswap/crush/internal/oauth/copilot"
+	"github.com/uglyswap/crush/internal/tui/styles"
+	"github.com/uglyswap/crush/internal/tui/util"
 	"github.com/pkg/browser"
 )
 
@@ -56,7 +57,7 @@ type DeviceFlow struct {
 func NewDeviceFlow() *DeviceFlow {
 	s := spinner.New()
 	s.Spinner = spinner.Dot
-	s.Style = lipgloss.NewStyle().Foreground(styles.CurrentTheme().GreenLight)
+	s.Style = lipgloss.NewStyle().Foreground(styles.TC(styles.CurrentTheme().GreenLight))
 	return &DeviceFlow{
 		State:   DeviceFlowStateDisplay,
 		spinner: s,
@@ -97,12 +98,12 @@ func (d *DeviceFlow) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 func (d *DeviceFlow) View() string {
 	t := styles.CurrentTheme()
 
-	whiteStyle := lipgloss.NewStyle().Foreground(t.White)
-	primaryStyle := lipgloss.NewStyle().Foreground(t.Primary)
-	greenStyle := lipgloss.NewStyle().Foreground(t.GreenLight)
-	linkStyle := lipgloss.NewStyle().Foreground(t.GreenDark).Underline(true)
-	errorStyle := lipgloss.NewStyle().Foreground(t.Error)
-	mutedStyle := lipgloss.NewStyle().Foreground(t.FgMuted)
+	whiteStyle := lipgloss.NewStyle().Foreground(styles.TC(t.White))
+	primaryStyle := lipgloss.NewStyle().Foreground(styles.TC(t.Primary))
+	greenStyle := lipgloss.NewStyle().Foreground(styles.TC(t.GreenLight))
+	linkStyle := lipgloss.NewStyle().Foreground(styles.TC(t.GreenDark)).Underline(true)
+	errorStyle := lipgloss.NewStyle().Foreground(styles.TC(t.Error))
+	mutedStyle := lipgloss.NewStyle().Foreground(styles.TC(t.FgMuted))
 
 	switch d.State {
 	case DeviceFlowStateDisplay:
@@ -128,17 +129,17 @@ func (d *DeviceFlow) View() string {
 			Width(d.width-2).
 			Height(7).
 			Align(lipgloss.Center, lipgloss.Center).
-			Background(t.BgBaseLighter).
+			Background(styles.TC(t.BgBaseLighter)).
 			Margin(1).
 			Render(
 				lipgloss.NewStyle().
 					Bold(true).
-					Foreground(t.White).
+					Foreground(styles.TC(t.White)).
 					Render(d.deviceCode.UserCode),
 			)
 
 		uri := d.deviceCode.VerificationURI
-		link := lipgloss.NewStyle().Hyperlink(uri, "id=copilot-verify").Render(uri)
+		link := lipgloss.NewHyperlinkStyle().Hyperlink(uri, "id=copilot-verify").Render(uri)
 		url := mutedStyle.
 			Margin(0, 1).
 			Width(d.width - 2).
@@ -179,11 +180,11 @@ func (d *DeviceFlow) View() string {
 			lipgloss.Left,
 			message,
 			"",
-			linkStyle.Margin(0, 1).Width(d.width-2).Hyperlink(copilot.SignupURL, "id=copilot-signup").Render(copilot.SignupURL),
+			lipgloss.StyleWithHyperlink(linkStyle.Margin(0, 1).Width(d.width-2)).Hyperlink(copilot.SignupURL, "id=copilot-signup").Render(copilot.SignupURL),
 			"",
 			freeMessage,
 			"",
-			linkStyle.Margin(0, 1).Width(d.width-2).Hyperlink(copilot.FreeURL, "id=copilot-free").Render(copilot.FreeURL),
+			lipgloss.StyleWithHyperlink(linkStyle.Margin(0, 1).Width(d.width-2)).Hyperlink(copilot.FreeURL, "id=copilot-free").Render(copilot.FreeURL),
 		)
 
 	default:
@@ -197,14 +198,14 @@ func (d *DeviceFlow) SetWidth(w int) {
 }
 
 // Cursor hides the cursor.
-func (d *DeviceFlow) Cursor() *tea.Cursor { return nil }
+func (d *DeviceFlow) Cursor() *compat_tea.Cursor { return nil }
 
 // CopyCodeAndOpenURL copies the user code to the clipboard and opens the URL.
 func (d *DeviceFlow) CopyCodeAndOpenURL() tea.Cmd {
 	switch d.State {
 	case DeviceFlowStateDisplay:
 		return tea.Sequence(
-			tea.SetClipboard(d.deviceCode.UserCode),
+			compat_tea.SetClipboard(d.deviceCode.UserCode),
 			func() tea.Msg {
 				if err := browser.OpenURL(d.deviceCode.VerificationURI); err != nil {
 					return DeviceFlowErrorMsg{Error: fmt.Errorf("failed to open browser: %w", err)}
@@ -234,7 +235,7 @@ func (d *DeviceFlow) CopyCode() tea.Cmd {
 		return nil
 	}
 	return tea.Sequence(
-		tea.SetClipboard(d.deviceCode.UserCode),
+		compat_tea.SetClipboard(d.deviceCode.UserCode),
 		util.ReportInfo("Code copied to clipboard"),
 	)
 }

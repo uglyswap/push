@@ -3,9 +3,9 @@ package dialogs
 import (
 	"slices"
 
-	tea "charm.land/bubbletea/v2"
-	"charm.land/lipgloss/v2"
-	"github.com/charmbracelet/crush/internal/tui/util"
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/uglyswap/crush/internal/compat/lipgloss"
+	"github.com/uglyswap/crush/internal/tui/util"
 )
 
 type DialogID string

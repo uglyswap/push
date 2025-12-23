@@ -1,12 +1,12 @@
 package quit
 
 import (
-	"charm.land/bubbles/v2/key"
-	tea "charm.land/bubbletea/v2"
-	"charm.land/lipgloss/v2"
-	"github.com/charmbracelet/crush/internal/tui/components/dialogs"
-	"github.com/charmbracelet/crush/internal/tui/styles"
-	"github.com/charmbracelet/crush/internal/tui/util"
+	"github.com/charmbracelet/bubbles/key"
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
+	"github.com/uglyswap/crush/internal/tui/components/dialogs"
+	"github.com/uglyswap/crush/internal/tui/styles"
+	"github.com/uglyswap/crush/internal/tui/util"
 )
 
 const (
@@ -45,7 +45,7 @@ func (q *quitDialogCmp) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		q.wWidth = msg.Width
 		q.wHeight = msg.Height
-	case tea.KeyPressMsg:
+	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, q.keymap.LeftRight, q.keymap.Tab):
 			q.selectedNo = !q.selectedNo
@@ -72,11 +72,11 @@ func (q *quitDialogCmp) View() string {
 	noStyle := yesStyle
 
 	if q.selectedNo {
-		noStyle = noStyle.Foreground(t.White).Background(t.Secondary)
-		yesStyle = yesStyle.Background(t.BgSubtle)
+		noStyle = noStyle.Foreground(styles.TC(t.White)).Background(styles.TC(t.Secondary))
+		yesStyle = yesStyle.Background(styles.TC(t.BgSubtle))
 	} else {
-		yesStyle = yesStyle.Foreground(t.White).Background(t.Secondary)
-		noStyle = noStyle.Background(t.BgSubtle)
+		yesStyle = yesStyle.Foreground(styles.TC(t.White)).Background(styles.TC(t.Secondary))
+		noStyle = noStyle.Background(styles.TC(t.BgSubtle))
 	}
 
 	const horizontalPadding = 3
@@ -101,7 +101,7 @@ func (q *quitDialogCmp) View() string {
 	quitDialogStyle := baseStyle.
 		Padding(1, 2).
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(t.BorderFocus)
+		BorderForeground(styles.TC(t.BorderFocus))
 
 	return quitDialogStyle.Render(content)
 }

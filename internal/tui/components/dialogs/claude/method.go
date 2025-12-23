@@ -1,10 +1,10 @@
 package claude
 
 import (
-	tea "charm.land/bubbletea/v2"
-	"charm.land/lipgloss/v2"
-	"github.com/charmbracelet/crush/internal/tui/styles"
-	"github.com/charmbracelet/crush/internal/tui/util"
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
+	"github.com/uglyswap/crush/internal/tui/styles"
+	"github.com/uglyswap/crush/internal/tui/util"
 )
 
 type AuthMethod int
@@ -37,9 +37,9 @@ func (a *AuthMethodChooser) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 func (a *AuthMethodChooser) View() string {
 	t := styles.CurrentTheme()
 
-	white := lipgloss.NewStyle().Foreground(t.White)
-	primary := lipgloss.NewStyle().Foreground(t.Primary)
-	success := lipgloss.NewStyle().Foreground(t.Success)
+	white := lipgloss.NewStyle().Foreground(styles.TC(t.White))
+	primary := lipgloss.NewStyle().Foreground(styles.TC(t.Primary))
+	success := lipgloss.NewStyle().Foreground(styles.TC(t.Success))
 
 	titleStyle := white
 	if a.isOnboarding {

@@ -5,14 +5,15 @@ import (
 	"fmt"
 	"net/url"
 
-	"charm.land/bubbles/v2/spinner"
-	"charm.land/bubbles/v2/textinput"
-	tea "charm.land/bubbletea/v2"
-	"charm.land/lipgloss/v2"
-	"github.com/charmbracelet/crush/internal/oauth"
-	"github.com/charmbracelet/crush/internal/oauth/claude"
-	"github.com/charmbracelet/crush/internal/tui/styles"
-	"github.com/charmbracelet/crush/internal/tui/util"
+	"github.com/charmbracelet/bubbles/spinner"
+	"github.com/charmbracelet/bubbles/textinput"
+	compat_textinput "github.com/uglyswap/crush/internal/compat/bubbles/textinput"
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/uglyswap/crush/internal/compat/lipgloss"
+	"github.com/uglyswap/crush/internal/oauth"
+	"github.com/uglyswap/crush/internal/oauth/claude"
+	"github.com/uglyswap/crush/internal/tui/styles"
+	"github.com/uglyswap/crush/internal/tui/util"
 	"github.com/pkg/browser"
 	"github.com/zeebo/xxh3"
 )
@@ -90,14 +91,14 @@ func (o *OAuth2) Init() tea.Cmd {
 
 	o.CodeInput = textinput.New()
 	o.CodeInput.Placeholder = "Paste or type"
-	o.CodeInput.SetVirtualCursor(false)
+	compat_textinput.SetVirtualCursorOnModel(&o.CodeInput, false)
 	o.CodeInput.Prompt = "> "
-	o.CodeInput.SetStyles(t.S().TextInput)
-	o.CodeInput.SetWidth(50)
+	compat_textinput.SetStylesOnModel(&o.CodeInput, t.S().TextInput)
+	compat_textinput.SetWidthOnModel(&o.CodeInput, 50)
 
 	o.spinner = spinner.New(
 		spinner.WithSpinner(spinner.Dot),
-		spinner.WithStyle(t.S().Base.Foreground(t.Green)),
+		spinner.WithStyle(t.S().Base.Foreground(styles.TC(t.Green))),
 	)
 
 	return nil
@@ -155,10 +156,10 @@ func (o *OAuth2) ValidationConfirm() (util.Model, tea.Cmd) {
 func (o *OAuth2) View() string {
 	t := styles.CurrentTheme()
 
-	whiteStyle := lipgloss.NewStyle().Foreground(t.White)
-	primaryStyle := lipgloss.NewStyle().Foreground(t.Primary)
-	successStyle := lipgloss.NewStyle().Foreground(t.Success)
-	errorStyle := lipgloss.NewStyle().Foreground(t.Error)
+	whiteStyle := lipgloss.NewStyle().Foreground(styles.TC(t.White))
+	primaryStyle := lipgloss.NewStyle().Foreground(styles.TC(t.Primary))
+	successStyle := lipgloss.NewStyle().Foreground(styles.TC(t.Success))
+	errorStyle := lipgloss.NewStyle().Foreground(styles.TC(t.Error))
 
 	titleStyle := whiteStyle
 	if o.isOnboarding {
@@ -169,7 +170,7 @@ func (o *OAuth2) View() string {
 	case o.err != nil:
 		return lipgloss.NewStyle().
 			Margin(0, 1).
-			Foreground(t.Error).
+			Foreground(styles.TC(t.Error)).
 			Render(o.err.Error())
 	case o.State == OAuthStateURL:
 		heading := lipgloss.
@@ -181,9 +182,9 @@ func (o *OAuth2) View() string {
 			lipgloss.Left,
 			heading,
 			"",
-			lipgloss.NewStyle().
+			lipgloss.StyleWithHyperlink(lipgloss.NewStyle().
 				Margin(0, 1).
-				Foreground(t.FgMuted).
+				Foreground(styles.TC(t.FgMuted))).
 				Hyperlink(o.URL, o.urlId).
 				Render(o.displayUrl()),
 		)
@@ -222,7 +223,7 @@ func (o *OAuth2) SetDefaults() {
 
 func (o *OAuth2) SetWidth(w int) {
 	o.width = w
-	o.CodeInput.SetWidth(w - 4)
+	compat_textinput.SetWidthOnModel(&o.CodeInput, w-4)
 }
 
 func (o *OAuth2) SetError(err error) {
