@@ -7,16 +7,16 @@ import (
 	"strings"
 	"time"
 
-	"charm.land/lipgloss/v2"
-	"charm.land/lipgloss/v2/tree"
-	"github.com/charmbracelet/crush/internal/agent"
-	"github.com/charmbracelet/crush/internal/agent/tools"
-	"github.com/charmbracelet/crush/internal/ansiext"
-	"github.com/charmbracelet/crush/internal/fsext"
-	"github.com/charmbracelet/crush/internal/tui/components/chat/todos"
-	"github.com/charmbracelet/crush/internal/tui/components/core"
-	"github.com/charmbracelet/crush/internal/tui/highlight"
-	"github.com/charmbracelet/crush/internal/tui/styles"
+	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/lipgloss/tree"
+	"github.com/uglyswap/crush/internal/agent"
+	"github.com/uglyswap/crush/internal/agent/tools"
+	"github.com/uglyswap/crush/internal/ansiext"
+	"github.com/uglyswap/crush/internal/fsext"
+	"github.com/uglyswap/crush/internal/tui/components/chat/todos"
+	"github.com/uglyswap/crush/internal/tui/components/core"
+	"github.com/uglyswap/crush/internal/tui/highlight"
+	"github.com/uglyswap/crush/internal/tui/styles"
 	"github.com/charmbracelet/x/ansi"
 )
 
@@ -134,17 +134,17 @@ func (br baseRenderer) unmarshalParams(input string, target any) error {
 // makeHeader builds the tool call header with status icon and parameters for a nested tool call.
 func (br baseRenderer) makeNestedHeader(v *toolCallCmp, tool string, width int, params ...string) string {
 	t := styles.CurrentTheme()
-	icon := t.S().Base.Foreground(t.GreenDark).Render(styles.ToolPending)
+	icon := t.S().Base.Foreground(styles.TC(t.GreenDark)).Render(styles.ToolPending)
 	if v.result.ToolCallID != "" {
 		if v.result.IsError {
-			icon = t.S().Base.Foreground(t.RedDark).Render(styles.ToolError)
+			icon = t.S().Base.Foreground(styles.TC(t.RedDark)).Render(styles.ToolError)
 		} else {
-			icon = t.S().Base.Foreground(t.Green).Render(styles.ToolSuccess)
+			icon = t.S().Base.Foreground(styles.TC(t.Green)).Render(styles.ToolSuccess)
 		}
 	} else if v.cancelled {
 		icon = t.S().Muted.Render(styles.ToolPending)
 	}
-	tool = t.S().Base.Foreground(t.FgHalfMuted).Render(tool)
+	tool = t.S().Base.Foreground(styles.TC(t.FgHalfMuted)).Render(tool)
 	prefix := fmt.Sprintf("%s %s ", icon, tool)
 	return prefix + renderParamList(true, width-lipgloss.Width(prefix), params...)
 }
@@ -155,17 +155,17 @@ func (br baseRenderer) makeHeader(v *toolCallCmp, tool string, width int, params
 		return br.makeNestedHeader(v, tool, width, params...)
 	}
 	t := styles.CurrentTheme()
-	icon := t.S().Base.Foreground(t.GreenDark).Render(styles.ToolPending)
+	icon := t.S().Base.Foreground(styles.TC(t.GreenDark)).Render(styles.ToolPending)
 	if v.result.ToolCallID != "" {
 		if v.result.IsError {
-			icon = t.S().Base.Foreground(t.RedDark).Render(styles.ToolError)
+			icon = t.S().Base.Foreground(styles.TC(t.RedDark)).Render(styles.ToolError)
 		} else {
-			icon = t.S().Base.Foreground(t.Green).Render(styles.ToolSuccess)
+			icon = t.S().Base.Foreground(styles.TC(t.Green)).Render(styles.ToolSuccess)
 		}
 	} else if v.cancelled {
 		icon = t.S().Muted.Render(styles.ToolPending)
 	}
-	tool = t.S().Base.Foreground(t.Blue).Render(tool)
+	tool = t.S().Base.Foreground(styles.TC(t.Blue)).Render(tool)
 	prefix := fmt.Sprintf("%s %s ", icon, tool)
 	return prefix + renderParamList(false, width-lipgloss.Width(prefix), params...)
 }
@@ -174,8 +174,8 @@ func (br baseRenderer) makeHeader(v *toolCallCmp, tool string, width int, params
 func (br baseRenderer) renderError(v *toolCallCmp, message string) string {
 	t := styles.CurrentTheme()
 	header := br.makeHeader(v, prettifyToolName(v.call.Name), v.textWidth(), "")
-	errorTag := t.S().Base.Padding(0, 1).Background(t.Red).Foreground(t.White).Render("ERROR")
-	message = t.S().Base.Foreground(t.FgHalfMuted).Render(v.fit(message, v.textWidth()-3-lipgloss.Width(errorTag))) // -2 for padding and space
+	errorTag := t.S().Base.Padding(0, 1).Background(styles.TC(t.Red)).Foreground(styles.TC(t.White)).Render("ERROR")
+	message = t.S().Base.Foreground(styles.TC(t.FgHalfMuted)).Render(v.fit(message, v.textWidth()-3-lipgloss.Width(errorTag))) // -2 for padding and space
 	return joinHeaderBody(header, errorTag+" "+message)
 }
 
@@ -295,19 +295,19 @@ func (br bashRenderer) Render(v *toolCallCmp) string {
 
 func makeJobHeader(v *toolCallCmp, subcommand, pid, description string, width int) string {
 	t := styles.CurrentTheme()
-	icon := t.S().Base.Foreground(t.GreenDark).Render(styles.ToolPending)
+	icon := t.S().Base.Foreground(styles.TC(t.GreenDark)).Render(styles.ToolPending)
 	if v.result.ToolCallID != "" {
 		if v.result.IsError {
-			icon = t.S().Base.Foreground(t.RedDark).Render(styles.ToolError)
+			icon = t.S().Base.Foreground(styles.TC(t.RedDark)).Render(styles.ToolError)
 		} else {
-			icon = t.S().Base.Foreground(t.Green).Render(styles.ToolSuccess)
+			icon = t.S().Base.Foreground(styles.TC(t.Green)).Render(styles.ToolSuccess)
 		}
 	} else if v.cancelled {
 		icon = t.S().Muted.Render(styles.ToolPending)
 	}
 
-	jobPart := t.S().Base.Foreground(t.Blue).Render("Job")
-	subcommandPart := t.S().Base.Foreground(t.BlueDark).Render("(" + subcommand + ")")
+	jobPart := t.S().Base.Foreground(styles.TC(t.Blue)).Render("Job")
+	subcommandPart := t.S().Base.Foreground(styles.TC(t.BlueDark)).Render("(" + subcommand + ")")
 	pidPart := t.S().Muted.Render(pid)
 	descPart := ""
 	if description != "" {
@@ -495,7 +495,7 @@ func (er editRenderer) Render(v *toolCallCmp) string {
 		if lipgloss.Height(formatted) > responseContextHeight {
 			contentLines := strings.Split(formatted, "\n")
 			truncateMessage := t.S().Muted.
-				Background(t.BgBaseLighter).
+				Background(styles.TC(t.BgBaseLighter)).
 				PaddingLeft(2).
 				Width(v.textWidth() - 2).
 				Render(fmt.Sprintf("… (%d lines)", len(contentLines)-responseContextHeight))
@@ -546,7 +546,7 @@ func (mer multiEditRenderer) Render(v *toolCallCmp) string {
 		if lipgloss.Height(formatted) > responseContextHeight {
 			contentLines := strings.Split(formatted, "\n")
 			truncateMessage := t.S().Muted.
-				Background(t.BgBaseLighter).
+				Background(styles.TC(t.BgBaseLighter)).
 				PaddingLeft(2).
 				Width(v.textWidth() - 4).
 				Render(fmt.Sprintf("… (%d lines)", len(contentLines)-responseContextHeight))
@@ -555,7 +555,7 @@ func (mer multiEditRenderer) Render(v *toolCallCmp) string {
 
 		// Add failed edits warning if any exist
 		if len(meta.EditsFailed) > 0 {
-			noteTag := t.S().Base.Padding(0, 2).Background(t.Info).Foreground(t.White).Render("Note")
+			noteTag := t.S().Base.Padding(0, 2).Background(styles.TC(t.Info)).Foreground(styles.TC(t.White)).Render("Note")
 			noteMsg := fmt.Sprintf("%d of %d edits succeeded", meta.EditsApplied, len(params.Edits))
 			note := t.S().Base.
 				Width(v.textWidth() - 2).
@@ -660,7 +660,7 @@ func (fr agenticFetchRenderer) Render(v *toolCallCmp) string {
 		return res
 	}
 
-	taskTag := t.S().Base.Bold(true).Padding(0, 1).MarginLeft(2).Background(t.GreenLight).Foreground(t.Border).Render("Prompt")
+	taskTag := t.S().Base.Bold(true).Padding(0, 1).MarginLeft(2).Background(styles.TC(t.GreenLight)).Foreground(styles.TC(t.Border)).Render("Prompt")
 	remainingWidth := v.textWidth() - (lipgloss.Width(taskTag) + 1)
 	remainingWidth = min(remainingWidth, 120-(lipgloss.Width(taskTag)+1))
 	prompt = t.S().Base.Width(remainingWidth).Render(prompt)
@@ -949,7 +949,7 @@ func (tr agentRenderer) Render(v *toolCallCmp) string {
 	if res, done := earlyState(header, v); v.cancelled && done {
 		return res
 	}
-	taskTag := t.S().Base.Bold(true).Padding(0, 1).MarginLeft(2).Background(t.BlueLight).Foreground(t.White).Render("Task")
+	taskTag := t.S().Base.Bold(true).Padding(0, 1).MarginLeft(2).Background(styles.TC(t.BlueLight)).Foreground(styles.TC(t.White)).Render("Task")
 	remainingWidth := v.textWidth() - lipgloss.Width(header) - lipgloss.Width(taskTag) - 2
 	remainingWidth = min(remainingWidth, 120-lipgloss.Width(taskTag)-2)
 	prompt = t.S().Muted.Width(remainingWidth).Render(prompt)
@@ -1046,12 +1046,12 @@ func earlyState(header string, v *toolCallCmp) (string, bool) {
 	case v.result.IsError:
 		message = v.renderToolError()
 	case v.cancelled:
-		message = t.S().Base.Foreground(t.FgSubtle).Render("Canceled.")
+		message = t.S().Base.Foreground(styles.TC(t.FgSubtle)).Render("Canceled.")
 	case v.result.ToolCallID == "":
 		if v.permissionRequested && !v.permissionGranted {
-			message = t.S().Base.Foreground(t.FgSubtle).Render("Requesting permission...")
+			message = t.S().Base.Foreground(styles.TC(t.FgSubtle)).Render("Requesting permission...")
 		} else {
-			message = t.S().Base.Foreground(t.FgSubtle).Render("Waiting for tool response...")
+			message = t.S().Base.Foreground(styles.TC(t.FgSubtle)).Render("Waiting for tool response...")
 		}
 	default:
 		return "", false
@@ -1090,13 +1090,13 @@ func renderPlainContent(v *toolCallCmp, content string) string {
 		}
 		out = append(out, t.S().Muted.
 			Width(width).
-			Background(t.BgBaseLighter).
+			Background(styles.TC(t.BgBaseLighter)).
 			Render(ln))
 	}
 
 	if len(lines) > responseContextHeight {
 		out = append(out, t.S().Muted.
-			Background(t.BgBaseLighter).
+			Background(styles.TC(t.BgBaseLighter)).
 			Width(width).
 			Render(fmt.Sprintf("… (%d lines)", len(lines)-responseContextHeight)))
 	}
@@ -1129,7 +1129,7 @@ func renderMarkdownContent(v *toolCallCmp, content string) string {
 		out = append(out, ln)
 	}
 
-	style := t.S().Muted.Background(t.BgBaseLighter)
+	style := t.S().Muted.Background(styles.TC(t.BgBaseLighter))
 	if len(lines) > responseContextHeight {
 		out = append(out, style.
 			Width(width-2).
@@ -1167,8 +1167,8 @@ func renderCodeContent(v *toolCallCmp, path, content string, offset int) string 
 		lines[i] = ansiext.Escape(ln)
 	}
 
-	bg := t.BgBase
-	highlighted, _ := highlight.SyntaxHighlight(strings.Join(lines, "\n"), path, bg)
+	bg := styles.TC(t.BgBase)
+	highlighted, _ := highlight.SyntaxHighlight(strings.Join(lines, "\n"), path, t.BgBase)
 	lines = strings.Split(highlighted, "\n")
 
 	if len(strings.Split(content, "\n")) > responseContextHeight {
@@ -1184,8 +1184,8 @@ func renderCodeContent(v *toolCallCmp, path, content string, offset int) string 
 	w := v.textWidth() - maxDigits - numPL - numPR - 2 // -2 for left padding
 	for i, ln := range lines {
 		num := t.S().Base.
-			Foreground(t.FgMuted).
-			Background(t.BgBase).
+			Foreground(styles.TC(t.FgMuted)).
+			Background(styles.TC(t.BgBase)).
 			PaddingRight(1).
 			PaddingLeft(1).
 			Render(fmt.Sprintf(numFmt, i+1+offset))
@@ -1210,8 +1210,8 @@ func renderImageContent(v *toolCallCmp, data, mediaType, textContent string) str
 	dataSize := len(data) * 3 / 4
 	sizeStr := formatSize(dataSize)
 
-	loaded := t.S().Base.Foreground(t.Green).Render("Loaded")
-	arrow := t.S().Base.Foreground(t.GreenDark).Render("→")
+	loaded := t.S().Base.Foreground(styles.TC(t.Green)).Render("Loaded")
+	arrow := t.S().Base.Foreground(styles.TC(t.GreenDark)).Render("→")
 	typeStyled := t.S().Base.Render(mediaType)
 	sizeStyled := t.S().Subtle.Render(sizeStr)
 
@@ -1228,8 +1228,8 @@ func renderImageContent(v *toolCallCmp, data, mediaType, textContent string) str
 func renderMediaContent(v *toolCallCmp, mediaType, textContent string) string {
 	t := styles.CurrentTheme()
 
-	loaded := t.S().Base.Foreground(t.Green).Render("Loaded")
-	arrow := t.S().Base.Foreground(t.GreenDark).Render("→")
+	loaded := t.S().Base.Foreground(styles.TC(t.Green)).Render("Loaded")
+	arrow := t.S().Base.Foreground(styles.TC(t.GreenDark)).Render("→")
 	typeStyled := t.S().Base.Render(mediaType)
 	mediaDisplay := fmt.Sprintf("%s %s %s", loaded, arrow, typeStyled)
 
@@ -1255,8 +1255,8 @@ func formatSize(bytes int) string {
 func (v *toolCallCmp) renderToolError() string {
 	t := styles.CurrentTheme()
 	err := strings.ReplaceAll(v.result.Content, "\n", " ")
-	errTag := t.S().Base.Padding(0, 1).Background(t.Red).Foreground(t.White).Render("ERROR")
-	err = fmt.Sprintf("%s %s", errTag, t.S().Base.Foreground(t.FgHalfMuted).Render(v.fit(err, v.textWidth()-2-lipgloss.Width(errTag))))
+	errTag := t.S().Base.Padding(0, 1).Background(styles.TC(t.Red)).Foreground(styles.TC(t.White)).Render("ERROR")
+	err = fmt.Sprintf("%s %s", errTag, t.S().Base.Foreground(styles.TC(t.FgHalfMuted)).Render(v.fit(err, v.textWidth()-2-lipgloss.Width(errTag))))
 	return err
 }
 
@@ -1344,7 +1344,7 @@ func (tr todosRenderer) Render(v *toolCallCmp) string {
 		}
 
 		// Default display from params (used when pending or no metadata).
-		ratio := t.S().Base.Foreground(t.BlueDark).Render(fmt.Sprintf("%d/%d", completedCount, len(params.Todos)))
+		ratio := t.S().Base.Foreground(styles.TC(t.BlueDark)).Render(fmt.Sprintf("%d/%d", completedCount, len(params.Todos)))
 		headerText = ratio
 		if inProgressTask != "" {
 			headerText = fmt.Sprintf("%s · %s", ratio, inProgressTask)
@@ -1366,7 +1366,7 @@ func (tr todosRenderer) Render(v *toolCallCmp) string {
 					hasStarted := meta.JustStarted != ""
 					allCompleted := meta.Completed == meta.Total
 
-					ratio := t.S().Base.Foreground(t.BlueDark).Render(fmt.Sprintf("%d/%d", meta.Completed, meta.Total))
+					ratio := t.S().Base.Foreground(styles.TC(t.BlueDark)).Render(fmt.Sprintf("%d/%d", meta.Completed, meta.Total))
 					if hasCompleted && hasStarted {
 						text := t.S().Subtle.Render(fmt.Sprintf(" · completed %d, starting next", len(meta.JustCompleted)))
 						headerText = fmt.Sprintf("%s%s", ratio, text)
@@ -1387,8 +1387,8 @@ func (tr todosRenderer) Render(v *toolCallCmp) string {
 						// Show all todos when all are completed, like when created
 						body = todos.FormatTodosList(meta.Todos, styles.ArrowRightIcon, t, v.textWidth())
 					} else if meta.JustStarted != "" {
-						body = t.S().Base.Foreground(t.GreenDark).Render(styles.ArrowRightIcon+" ") +
-							t.S().Base.Foreground(t.FgBase).Render(meta.JustStarted)
+						body = t.S().Base.Foreground(styles.TC(t.GreenDark)).Render(styles.ArrowRightIcon+" ") +
+							t.S().Base.Foreground(styles.TC(t.FgBase)).Render(meta.JustStarted)
 					}
 				}
 			}
