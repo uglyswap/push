@@ -14,30 +14,30 @@ import (
 	"sync"
 	"time"
 
-	tea "charm.land/bubbletea/v2"
-	"charm.land/fantasy"
-	"charm.land/lipgloss/v2"
-	"github.com/charmbracelet/crush/internal/agent"
-	"github.com/charmbracelet/crush/internal/agent/tools/mcp"
-	"github.com/charmbracelet/crush/internal/config"
-	"github.com/charmbracelet/crush/internal/csync"
-	"github.com/charmbracelet/crush/internal/db"
-	"github.com/charmbracelet/crush/internal/format"
-	"github.com/charmbracelet/crush/internal/history"
-	"github.com/charmbracelet/crush/internal/log"
-	"github.com/charmbracelet/crush/internal/lsp"
-	"github.com/charmbracelet/crush/internal/message"
-	"github.com/charmbracelet/crush/internal/permission"
-	"github.com/charmbracelet/crush/internal/pubsub"
-	"github.com/charmbracelet/crush/internal/session"
-	"github.com/charmbracelet/crush/internal/shell"
-	"github.com/charmbracelet/crush/internal/tui/components/anim"
-	"github.com/charmbracelet/crush/internal/tui/styles"
-	"github.com/charmbracelet/crush/internal/update"
-	"github.com/charmbracelet/crush/internal/version"
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/x/ansi"
-	"github.com/charmbracelet/x/exp/charmtone"
 	"github.com/charmbracelet/x/term"
+	"github.com/uglyswap/crush/internal/agent"
+	"github.com/uglyswap/crush/internal/agent/tools/mcp"
+	"github.com/uglyswap/crush/internal/charmtone"
+	"github.com/uglyswap/crush/internal/config"
+	"github.com/uglyswap/crush/internal/csync"
+	"github.com/uglyswap/crush/internal/db"
+	"github.com/uglyswap/crush/internal/format"
+	"github.com/uglyswap/crush/internal/history"
+	"github.com/uglyswap/crush/internal/log"
+	"github.com/uglyswap/crush/internal/lsp"
+	"github.com/uglyswap/crush/internal/message"
+	"github.com/uglyswap/crush/internal/permission"
+	"github.com/uglyswap/crush/internal/pubsub"
+	"github.com/uglyswap/crush/internal/session"
+	"github.com/uglyswap/crush/internal/shell"
+	"github.com/uglyswap/crush/internal/tui/components/anim"
+	"github.com/uglyswap/crush/internal/tui/styles"
+	"github.com/uglyswap/crush/internal/update"
+	"github.com/uglyswap/crush/internal/version"
+	"github.com/uglyswap/crush/pkg/fantasy"
 )
 
 type App struct {
@@ -150,10 +150,15 @@ func (app *App) RunNonInteractive(ctx context.Context, output io.Writer, prompt 
 		// spinner's 'Generating...' text. Without this, that text would be
 		// unreadable in light terminals.
 		hasDarkBG := true
-		if f, ok := output.(*os.File); ok && stdinTTY && stdoutTTY {
-			hasDarkBG = lipgloss.HasDarkBackground(os.Stdin, f)
+		if _, ok := output.(*os.File); ok && stdinTTY && stdoutTTY {
+			hasDarkBG = lipgloss.HasDarkBackground()
 		}
-		defaultFG := lipgloss.LightDark(hasDarkBG)(charmtone.Pepper, t.FgBase)
+		var defaultFG lipgloss.TerminalColor
+		if hasDarkBG {
+			defaultFG = charmtone.Pepper.Lipgloss()
+		} else {
+			defaultFG = colorToLipgloss(t.FgBase)
+		}
 
 		spinner = format.NewSpinner(ctx, cancel, anim.Settings{
 			Size:        10,
@@ -442,4 +447,21 @@ func (app *App) checkForUpdates(ctx context.Context) {
 		LatestVersion:  info.Latest,
 		IsDevelopment:  info.IsDevelopment(),
 	}
+}
+
+// colorToLipgloss converts a color.Color to a lipgloss.Color.
+func colorToLipgloss(c interface{}) lipgloss.Color {
+	if c == nil {
+		return lipgloss.Color("")
+	}
+	// If it's already a charmtone.Color, use its Hex method
+	if ct, ok := c.(interface{ Hex() string }); ok {
+		return lipgloss.Color(ct.Hex())
+	}
+	// Otherwise convert from color.Color
+	if col, ok := c.(interface{ RGBA() (r, g, b, a uint32) }); ok {
+		r, g, b, _ := col.RGBA()
+		return lipgloss.Color(fmt.Sprintf("#%02x%02x%02x", r>>8, g>>8, b>>8))
+	}
+	return lipgloss.Color("")
 }
