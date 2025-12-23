@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"strings"
 
-	"charm.land/lipgloss/v2"
-	"github.com/charmbracelet/crush/internal/app"
-	"github.com/charmbracelet/crush/internal/config"
-	"github.com/charmbracelet/crush/internal/csync"
-	"github.com/charmbracelet/crush/internal/lsp"
-	"github.com/charmbracelet/crush/internal/tui/components/core"
-	"github.com/charmbracelet/crush/internal/tui/styles"
+	"github.com/charmbracelet/lipgloss"
+	"github.com/uglyswap/crush/internal/app"
+	"github.com/uglyswap/crush/internal/config"
+	"github.com/uglyswap/crush/internal/csync"
+	"github.com/uglyswap/crush/internal/lsp"
+	"github.com/uglyswap/crush/internal/tui/components/core"
+	"github.com/uglyswap/crush/internal/tui/styles"
 	"github.com/charmbracelet/x/powernap/pkg/lsp/protocol"
 )
 
@@ -38,7 +38,7 @@ func RenderLSPList(lspClients *csync.Map[string, *lsp.Client], opts RenderOption
 
 	lspConfigs := config.Get().LSP.Sorted()
 	if len(lspConfigs) == 0 {
-		lspList = append(lspList, t.S().Base.Foreground(t.Border).Render("None"))
+		lspList = append(lspList, t.S().Base.Foreground(styles.TC(t.Border)).Render("None"))
 		return lspList
 	}
 
@@ -79,16 +79,16 @@ func RenderLSPList(lspClients *csync.Map[string, *lsp.Client], opts RenderOption
 
 			errs := []string{}
 			if lspErrs[protocol.SeverityError] > 0 {
-				errs = append(errs, t.S().Base.Foreground(t.Error).Render(fmt.Sprintf("%s %d", styles.ErrorIcon, lspErrs[protocol.SeverityError])))
+				errs = append(errs, t.S().Base.Foreground(styles.TC(t.Error)).Render(fmt.Sprintf("%s %d", styles.ErrorIcon, lspErrs[protocol.SeverityError])))
 			}
 			if lspErrs[protocol.SeverityWarning] > 0 {
-				errs = append(errs, t.S().Base.Foreground(t.Warning).Render(fmt.Sprintf("%s %d", styles.WarningIcon, lspErrs[protocol.SeverityWarning])))
+				errs = append(errs, t.S().Base.Foreground(styles.TC(t.Warning)).Render(fmt.Sprintf("%s %d", styles.WarningIcon, lspErrs[protocol.SeverityWarning])))
 			}
 			if lspErrs[protocol.SeverityHint] > 0 {
-				errs = append(errs, t.S().Base.Foreground(t.FgHalfMuted).Render(fmt.Sprintf("%s %d", styles.HintIcon, lspErrs[protocol.SeverityHint])))
+				errs = append(errs, t.S().Base.Foreground(styles.TC(t.FgHalfMuted)).Render(fmt.Sprintf("%s %d", styles.HintIcon, lspErrs[protocol.SeverityHint])))
 			}
 			if lspErrs[protocol.SeverityInformation] > 0 {
-				errs = append(errs, t.S().Base.Foreground(t.FgHalfMuted).Render(fmt.Sprintf("%s %d", styles.InfoIcon, lspErrs[protocol.SeverityInformation])))
+				errs = append(errs, t.S().Base.Foreground(styles.TC(t.FgHalfMuted)).Render(fmt.Sprintf("%s %d", styles.InfoIcon, lspErrs[protocol.SeverityInformation])))
 			}
 			extraContent = strings.Join(errs, " ")
 		}
@@ -111,7 +111,7 @@ func RenderLSPList(lspClients *csync.Map[string, *lsp.Client], opts RenderOption
 
 func iconAndDescription(l config.LSP, t *styles.Theme, states map[string]app.LSPClientInfo) (lipgloss.Style, string) {
 	if l.LSP.Disabled {
-		return t.ItemOfflineIcon.Foreground(t.FgMuted), t.S().Subtle.Render("disabled")
+		return t.ItemOfflineIcon.Foreground(styles.TC(t.FgMuted)), t.S().Subtle.Render("disabled")
 	}
 
 	info := states[l.Name]
@@ -127,7 +127,7 @@ func iconAndDescription(l config.LSP, t *styles.Theme, states map[string]app.LSP
 		}
 		return t.ItemErrorIcon, description
 	case lsp.StateDisabled:
-		return t.ItemOfflineIcon.Foreground(t.FgMuted), t.S().Subtle.Render("inactive")
+		return t.ItemOfflineIcon.Foreground(styles.TC(t.FgMuted)), t.S().Subtle.Render("inactive")
 	default:
 		return t.ItemOfflineIcon, ""
 	}
@@ -144,10 +144,10 @@ func RenderLSPBlock(lspClients *csync.Map[string, *lsp.Client], opts RenderOptio
 		if len(lspConfigs) > opts.MaxItems {
 			remaining := len(lspConfigs) - opts.MaxItems
 			if remaining == 1 {
-				lspList = append(lspList, t.S().Base.Foreground(t.FgMuted).Render("…"))
+				lspList = append(lspList, t.S().Base.Foreground(styles.TC(t.FgMuted)).Render("…"))
 			} else {
 				lspList = append(lspList,
-					t.S().Base.Foreground(t.FgSubtle).Render(fmt.Sprintf("…and %d more", remaining)),
+					t.S().Base.Foreground(styles.TC(t.FgSubtle)).Render(fmt.Sprintf("…and %d more", remaining)),
 				)
 			}
 		}

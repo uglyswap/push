@@ -6,24 +6,24 @@ import (
 	"strings"
 	"time"
 
-	"charm.land/bubbles/v2/key"
-	"charm.land/bubbles/v2/viewport"
-	tea "charm.land/bubbletea/v2"
-	"charm.land/lipgloss/v2"
-	"github.com/charmbracelet/catwalk/pkg/catwalk"
+	"github.com/charmbracelet/bubbles/key"
+	"github.com/charmbracelet/bubbles/viewport"
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
+	"github.com/uglyswap/crush/internal/catwalk"
 	"github.com/charmbracelet/x/ansi"
 	"github.com/charmbracelet/x/exp/ordered"
 	"github.com/google/uuid"
 
 	"github.com/atotto/clipboard"
-	"github.com/charmbracelet/crush/internal/config"
-	"github.com/charmbracelet/crush/internal/message"
-	"github.com/charmbracelet/crush/internal/tui/components/anim"
-	"github.com/charmbracelet/crush/internal/tui/components/core"
-	"github.com/charmbracelet/crush/internal/tui/components/core/layout"
-	"github.com/charmbracelet/crush/internal/tui/exp/list"
-	"github.com/charmbracelet/crush/internal/tui/styles"
-	"github.com/charmbracelet/crush/internal/tui/util"
+	"github.com/uglyswap/crush/internal/config"
+	"github.com/uglyswap/crush/internal/message"
+	"github.com/uglyswap/crush/internal/tui/components/anim"
+	"github.com/uglyswap/crush/internal/tui/components/core"
+	"github.com/uglyswap/crush/internal/tui/components/core/layout"
+	"github.com/uglyswap/crush/internal/tui/exp/list"
+	"github.com/uglyswap/crush/internal/tui/styles"
+	"github.com/uglyswap/crush/internal/tui/util"
 )
 
 // CopyKey is the key binding for copying message content to the clipboard.
@@ -68,8 +68,7 @@ var focusedMessageBorder = lipgloss.Border{
 func NewMessageCmp(msg message.Message) MessageCmp {
 	t := styles.CurrentTheme()
 
-	thinkingViewport := viewport.New()
-	thinkingViewport.SetHeight(1)
+	thinkingViewport := viewport.New(0, 1)
 	thinkingViewport.KeyMap = viewport.KeyMap{}
 
 	m := &messageCmp{
@@ -103,16 +102,12 @@ func (m *messageCmp) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 			m.anim = u.(*anim.Anim)
 			return m, cmd
 		}
-	case tea.KeyPressMsg:
+	case tea.KeyMsg:
 		if key.Matches(msg, CopyKey) {
-			return m, tea.Sequence(
-				tea.SetClipboard(m.message.Content().Text),
-				func() tea.Msg {
-					_ = clipboard.WriteAll(m.message.Content().Text)
-					return nil
-				},
-				util.ReportInfo("Message copied to clipboard"),
-			)
+			return m, func() tea.Msg {
+				_ = clipboard.WriteAll(m.message.Content().Text)
+				return util.InfoMsg{Type: util.InfoTypeInfo, Msg: "Message copied to clipboard"}
+			}
 		}
 	}
 	return m, nil
@@ -165,10 +160,10 @@ func (msg *messageCmp) style() lipgloss.Style {
 
 	style := t.S().Text
 	if msg.message.Role == message.User {
-		style = style.PaddingLeft(1).BorderLeft(true).BorderStyle(borderStyle).BorderForeground(t.Primary)
+		style = style.PaddingLeft(1).BorderLeft(true).BorderStyle(borderStyle).BorderForeground(styles.TC(t.Primary))
 	} else {
 		if msg.focused {
-			style = style.PaddingLeft(1).BorderLeft(true).BorderStyle(borderStyle).BorderForeground(t.GreenDark)
+			style = style.PaddingLeft(1).BorderLeft(true).BorderStyle(borderStyle).BorderForeground(styles.TC(t.GreenDark))
 		} else {
 			style = style.PaddingLeft(2)
 		}
@@ -196,10 +191,10 @@ func (m *messageCmp) renderAssistantMessage() string {
 	} else if finished && content == "" && finishedData.Reason == message.FinishReasonCanceled {
 		content = "*Canceled*"
 	} else if finished && content == "" && finishedData.Reason == message.FinishReasonError {
-		errTag := t.S().Base.Padding(0, 1).Background(t.Red).Foreground(t.White).Render("ERROR")
+		errTag := t.S().Base.Padding(0, 1).Background(styles.TC(t.Red)).Foreground(styles.TC(t.White)).Render("ERROR")
 		truncated := ansi.Truncate(finishedData.Message, m.textWidth()-2-lipgloss.Width(errTag), "...")
-		title := fmt.Sprintf("%s %s", errTag, t.S().Base.Foreground(t.FgHalfMuted).Render(truncated))
-		details := t.S().Base.Foreground(t.FgSubtle).Width(m.textWidth() - 2).Render(finishedData.Details)
+		title := fmt.Sprintf("%s %s", errTag, t.S().Base.Foreground(styles.TC(t.FgHalfMuted)).Render(truncated))
+		details := t.S().Base.Foreground(styles.TC(t.FgSubtle)).Width(m.textWidth() - 2).Render(finishedData.Details)
 		errorContent := fmt.Sprintf("%s\n\n%s", title, details)
 		return m.style().Render(errorContent)
 	}
@@ -230,12 +225,12 @@ func (m *messageCmp) renderUserMessage() string {
 	attachmentStyle := t.S().Base.
 		Padding(0, 1).
 		MarginRight(1).
-		Background(t.FgMuted).
-		Foreground(t.FgBase).
+		Background(styles.TC(t.FgMuted)).
+		Foreground(styles.TC(t.FgBase)).
 		Render
 	iconStyle := t.S().Base.
-		Foreground(t.BgSubtle).
-		Background(t.Green).
+		Foreground(styles.TC(t.BgSubtle)).
+		Background(styles.TC(t.Green)).
 		Padding(0, 1).
 		Bold(true).
 		Render
@@ -285,7 +280,7 @@ func (m *messageCmp) renderThinkingContent() string {
 	if err != nil {
 		lines := strings.Split(reasoningContent.Thinking, "\n")
 		var content strings.Builder
-		lineStyle := t.S().Subtle.Background(t.BgBaseLighter)
+		lineStyle := t.S().Subtle.Background(styles.TC(t.BgBaseLighter))
 		for i, line := range lines {
 			if line == "" {
 				continue
@@ -300,8 +295,8 @@ func (m *messageCmp) renderThinkingContent() string {
 
 	fullContent := strings.TrimSpace(rendered)
 	height := ordered.Clamp(lipgloss.Height(fullContent), 1, 10)
-	m.thinkingViewport.SetHeight(height)
-	m.thinkingViewport.SetWidth(m.textWidth())
+	m.thinkingViewport.Height = height
+	m.thinkingViewport.Width = m.textWidth()
 	m.thinkingViewport.SetContent(fullContent)
 	m.thinkingViewport.GotoBottom()
 	finishReason := m.message.FinishPart()
@@ -323,7 +318,7 @@ func (m *messageCmp) renderThinkingContent() string {
 			footer = m.anim.View()
 		}
 	}
-	lineStyle := t.S().Subtle.Background(t.BgBaseLighter)
+	lineStyle := t.S().Subtle.Background(styles.TC(t.BgBaseLighter))
 	result := lineStyle.Width(m.textWidth()).Padding(0, 1, 0, 0).Render(m.thinkingViewport.View())
 	if footer != "" {
 		result += "\n\n" + footer
@@ -378,7 +373,7 @@ func (m *messageCmp) GetSize() (int, int) {
 // SetSize updates the width of the message component for text wrapping
 func (m *messageCmp) SetSize(width int, height int) tea.Cmd {
 	m.width = ordered.Clamp(width, 1, 120)
-	m.thinkingViewport.SetWidth(m.width - 4)
+	m.thinkingViewport.Width = m.width - 4
 	return nil
 }
 
