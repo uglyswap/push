@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"charm.land/fantasy"
-	"github.com/charmbracelet/crush/internal/csync"
-	"github.com/charmbracelet/crush/internal/lsp"
+	"github.com/uglyswap/crush/pkg/fantasy"
+	"github.com/uglyswap/crush/internal/csync"
+	"github.com/uglyswap/crush/internal/lsp"
 	"github.com/charmbracelet/x/powernap/pkg/lsp/protocol"
 )
 
