@@ -12,6 +12,15 @@ Crush is a next-generation AI CLI tool that combines the power of large language
 
 ## ✨ Features
 
+### 🧠 Extended Thinking Mode
+- **4 Thinking Levels** for progressive reasoning depth:
+  - `think` - Basic reasoning (1K token budget)
+  - `think_hard` - Moderate analysis (4K token budget)
+  - `think_harder` - Deep investigation (16K token budget)
+  - `ultrathink` - Maximum thoroughness (32K token budget)
+- Automatic activation based on task complexity
+- Configurable per-model and per-request
+
 ### 🤖 Multi-Agent Orchestration
 - **28 Specialized Agents** organized into squads (Frontend, Backend, Data, Security, QA, DevOps, AI/ML)
 - **Trust Cascade System** (L0-L4) for progressive autonomy
@@ -123,6 +132,9 @@ crush "Explain this codebase"
 
 # Run in a specific directory
 crush --cwd /path/to/project "Add tests for the API"
+
+# Use extended thinking for complex tasks
+crush --thinking ultrathink "Refactor the authentication system"
 ```
 
 ### Configuration
@@ -133,6 +145,11 @@ Create `~/.crush/config.yaml`:
 # API Configuration
 provider: anthropic  # anthropic, openai, or custom
 model: claude-sonnet-4-20250514
+
+# Extended Thinking
+thinking:
+  default_level: think_hard  # think, think_hard, think_harder, ultrathink
+  auto_escalate: true        # Automatically increase level for complex tasks
 
 # Behavior
 auto_approve: false
@@ -166,6 +183,42 @@ export OPENAI_API_KEY="your-api-key"
 
 ---
 
+## 🧠 Extended Thinking
+
+Crush supports extended thinking mode for deeper reasoning on complex tasks.
+
+### Thinking Levels
+
+| Level | Token Budget | Use Case |
+|-------|-------------|----------|
+| `think` | 1,024 | Simple analysis, quick fixes |
+| `think_hard` | 4,096 | Bug investigation, code review |
+| `think_harder` | 16,384 | Architecture decisions, complex debugging |
+| `ultrathink` | 32,768 | Critical systems, security analysis |
+
+### Usage Examples
+
+```bash
+# Command line
+crush --thinking ultrathink "Design a microservices architecture"
+
+# In configuration
+models:
+  large:
+    model: claude-sonnet-4-20250514
+    provider: anthropic
+    thinking_level: think_hard
+```
+
+### Auto-Escalation Keywords
+
+Crush automatically increases thinking depth when it detects:
+- `architecture`, `design system`, `migration` → ultrathink
+- `bug`, `debug`, `performance`, `optimize` → think_harder
+- `security`, `auth`, `API design` → think_hard
+
+---
+
 ## 🏗️ Architecture
 
 ```
@@ -188,9 +241,12 @@ crush/
 │   │   ├── loader.go       # Skill loading
 │   │   ├── registry.go     # Skill registry
 │   │   └── invoker.go      # Skill invocation
+│   ├── config/             # Configuration
+│   │   ├── config.go       # Main config
+│   │   └── thinking.go     # Extended thinking
 │   ├── lsp/                # LSP integration
 │   ├── cache/              # Caching system
-│   └── config/             # Configuration
+│   └── csync/              # Concurrent data structures
 └── docs/                   # Documentation
 ```
 
@@ -335,6 +391,7 @@ go test ./internal/orchestrator/...
 - [x] Web fetch and search
 - [x] Caching system
 - [x] Notebook editing
+- [x] Extended thinking mode
 - [ ] Remote MCP server support
 - [ ] Plugin system
 - [ ] Web UI

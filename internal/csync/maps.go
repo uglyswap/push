@@ -27,13 +27,39 @@ func NewMapFrom[K comparable, V any](m map[K]V) *Map[K, V] {
 	}
 }
 
+// LazyMap is a thread-safe lazy-loaded map.
+// It uses sync.Once to ensure the load function is called exactly once.
+type LazyMap[K comparable, V any] struct {
+	inner map[K]V
+	once  sync.Once
+	load  func() map[K]V
+	mu    sync.RWMutex
+}
+
 // NewLazyMap creates a new lazy-loaded map. The provided load function is
-// executed in a separate goroutine to populate the map.
+// executed once when the map is first accessed.
+// This implementation is thread-safe and avoids the race condition of
+// locking in one goroutine and unlocking in another.
 func NewLazyMap[K comparable, V any](load func() map[K]V) *Map[K, V] {
 	m := &Map[K, V]{}
-	m.mu.Lock()
+	// Use a separate struct to handle lazy loading properly
+	lazy := &LazyMap[K, V]{
+		load: load,
+	}
+	// Start loading in background
 	go func() {
-		m.inner = load()
+		lazy.once.Do(func() {
+			lazy.inner = load()
+		})
+	}()
+	// Return a wrapper that waits for initialization
+	m.inner = nil
+	go func() {
+		lazy.once.Do(func() {
+			lazy.inner = load()
+		})
+		m.mu.Lock()
+		m.inner = lazy.inner
 		m.mu.Unlock()
 	}()
 	return m
@@ -50,6 +76,9 @@ func (m *Map[K, V]) Reset(input map[K]V) {
 func (m *Map[K, V]) Set(key K, value V) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
+	if m.inner == nil {
+		m.inner = make(map[K]V)
+	}
 	m.inner[key] = value
 }
 
@@ -64,6 +93,10 @@ func (m *Map[K, V]) Del(key K) {
 func (m *Map[K, V]) Get(key K) (V, bool) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
+	if m.inner == nil {
+		var zero V
+		return zero, false
+	}
 	v, ok := m.inner[key]
 	return v, ok
 }
@@ -91,6 +124,10 @@ func (m *Map[K, V]) GetOrSet(key K, fn func() V) V {
 func (m *Map[K, V]) Take(key K) (V, bool) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
+	if m.inner == nil {
+		var zero V
+		return zero, false
+	}
 	v, ok := m.inner[key]
 	delete(m.inner, key)
 	return v, ok
@@ -100,7 +137,9 @@ func (m *Map[K, V]) Take(key K) (V, bool) {
 func (m *Map[K, V]) Seq2() iter.Seq2[K, V] {
 	dst := make(map[K]V)
 	m.mu.RLock()
-	maps.Copy(dst, m.inner)
+	if m.inner != nil {
+		maps.Copy(dst, m.inner)
+	}
 	m.mu.RUnlock()
 	return func(yield func(K, V) bool) {
 		for k, v := range dst {
@@ -144,5 +183,8 @@ func (m *Map[K, V]) UnmarshalJSON(data []byte) error {
 func (m *Map[K, V]) MarshalJSON() ([]byte, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
+	if m.inner == nil {
+		return []byte("null"), nil
+	}
 	return json.Marshal(m.inner)
 }
