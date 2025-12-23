@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"charm.land/fantasy"
-	"github.com/charmbracelet/crush/internal/agent/tools/mcp"
-	"github.com/charmbracelet/crush/internal/permission"
+	"github.com/uglyswap/crush/pkg/fantasy"
+	"github.com/uglyswap/crush/internal/agent/tools/mcp"
+	"github.com/uglyswap/crush/internal/permission"
 )
 
 // GetMCPTools gets all the currently available MCP tools.
@@ -128,3 +128,26 @@ func (m *Tool) Run(ctx context.Context, params fantasy.ToolCall) (fantasy.ToolRe
 		return fantasy.NewTextResponse(result.Content), nil
 	}
 }
+
+// Description implements fantasy.AgentTool.
+func (m *Tool) Description() string {
+	return m.tool.Description
+}
+
+// Parameters implements fantasy.AgentTool.
+func (m *Tool) Parameters() map[string]interface{} {
+	info := m.Info()
+	return info.Parameters
+}
+
+// Execute implements fantasy.AgentTool.
+func (m *Tool) Execute(ctx context.Context, input string) (fantasy.ToolResultOutput, error) {
+	result, err := m.Run(ctx, fantasy.ToolCall{Input: input})
+	if err != nil {
+		return fantasy.ToolResultOutputContentError{Error: err}, nil
+	}
+	return fantasy.ToolResultOutputContentText{Text: result.Content}, nil
+}
+
+// Verify Tool implements fantasy.AgentTool
+var _ fantasy.AgentTool = (*Tool)(nil)

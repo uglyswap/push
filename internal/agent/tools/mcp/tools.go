@@ -8,7 +8,7 @@ import (
 	"log/slog"
 	"strings"
 
-	"github.com/charmbracelet/crush/internal/csync"
+	"github.com/uglyswap/crush/internal/csync"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
