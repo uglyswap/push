@@ -18,8 +18,8 @@ import (
 	"sync"
 	"time"
 
-	"charm.land/fantasy"
-	"github.com/charmbracelet/crush/internal/fsext"
+	"github.com/uglyswap/crush/pkg/fantasy"
+	"github.com/uglyswap/crush/internal/fsext"
 )
 
 // regexCache provides thread-safe caching of compiled regex patterns
