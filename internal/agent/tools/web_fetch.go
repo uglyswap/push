@@ -99,6 +99,16 @@ func NewWebFetchTool() *WebFetchTool {
 	}
 }
 
+// NewWebFetchToolWithClient creates a new WebFetch tool with custom directory and HTTP client.
+// The tmpDir parameter is accepted for API compatibility but not used (kept for future use).
+func NewWebFetchToolWithClient(tmpDir string, client *http.Client) *WebFetchTool {
+	t := NewWebFetchTool()
+	if client != nil {
+		t.httpClient = client
+	}
+	return t
+}
+
 // Name returns the tool name.
 func (t *WebFetchTool) Name() string {
 	return "WebFetch"
@@ -124,8 +134,8 @@ Usage notes:
 - When a URL redirects to a different host, the tool will inform you`
 }
 
-// WebFetchParams represents the parameters for WebFetch.
-type WebFetchParams struct {
+// WebFetchToolParams represents the parameters for WebFetch tool with prompt.
+type WebFetchToolParams struct {
 	URL    string `json:"url"`
 	Prompt string `json:"prompt"`
 }
@@ -151,7 +161,7 @@ func (t *WebFetchTool) Parameters() map[string]interface{} {
 
 // Execute runs the WebFetch tool.
 func (t *WebFetchTool) Execute(ctx context.Context, params json.RawMessage) (string, error) {
-	var p WebFetchParams
+	var p WebFetchToolParams
 	if err := json.Unmarshal(params, &p); err != nil {
 		return "", fmt.Errorf("failed to parse parameters: %w", err)
 	}

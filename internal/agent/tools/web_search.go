@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"net/url"
 	"strings"
 )
@@ -38,6 +40,29 @@ func NewWebSearchTool(provider SearchProvider) *WebSearchTool {
 	return &WebSearchTool{
 		provider: provider,
 	}
+}
+
+// NewWebSearchToolWithHTTPClient creates a WebSearch tool with an HTTP client.
+// It wraps the http.Client with a DuckDuckGo provider.
+func NewWebSearchToolWithHTTPClient(client *http.Client) *WebSearchTool {
+	if client == nil {
+		client = http.DefaultClient
+	}
+	return NewWebSearchTool(NewDuckDuckGoProvider(&httpClientAdapter{client: client}))
+}
+
+// httpClientAdapter wraps http.Client to implement HTTPClient interface.
+type httpClientAdapter struct {
+	client *http.Client
+}
+
+func (a *httpClientAdapter) Get(url string) ([]byte, error) {
+	resp, err := a.client.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	return io.ReadAll(resp.Body)
 }
 
 // Name returns the tool name.

@@ -29,8 +29,8 @@ type WebFetchParams struct {
 	URL string `json:"url" description:"The URL to fetch content from"`
 }
 
-// WebSearchParams defines the parameters for the web_search tool.
-type WebSearchParams struct {
+// AgenticWebSearchParams defines the parameters for the web_search tool in agentic mode.
+type AgenticWebSearchParams struct {
 	Query      string `json:"query" description:"The search query to find information on the web"`
 	MaxResults int    `json:"max_results,omitempty" description:"Maximum number of results to return (default: 10, max: 20)"`
 }
