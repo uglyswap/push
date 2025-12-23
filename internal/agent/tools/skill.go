@@ -102,9 +102,9 @@ func (t *SkillTool) RequiresApproval() bool {
 
 // ListAvailableSkills returns a formatted list of available skills.
 func (t *SkillTool) ListAvailableSkills() string {
-	skills := t.registry.List()
+	skillList := t.registry.List()
 
-	if len(skills) == 0 {
+	if len(skillList) == 0 {
 		return "No skills available."
 	}
 
@@ -113,7 +113,7 @@ func (t *SkillTool) ListAvailableSkills() string {
 
 	// Group by source
 	bySource := make(map[string][]*skills.Skill)
-	for _, s := range skills {
+	for _, s := range skillList {
 		bySource[s.Source] = append(bySource[s.Source], s)
 	}
 

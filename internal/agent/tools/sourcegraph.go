@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"charm.land/fantasy"
+	"github.com/uglyswap/crush/pkg/fantasy"
 )
 
 type SourcegraphParams struct {

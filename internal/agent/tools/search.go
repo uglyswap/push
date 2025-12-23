@@ -12,8 +12,8 @@ import (
 	"golang.org/x/net/html"
 )
 
-// SearchResult represents a single search result from DuckDuckGo.
-type SearchResult struct {
+// DDGSearchResult represents a single search result from DuckDuckGo HTML scraping.
+type DDGSearchResult struct {
 	Title    string
 	Link     string
 	Snippet  string
@@ -21,7 +21,7 @@ type SearchResult struct {
 }
 
 // searchDuckDuckGo performs a web search using DuckDuckGo's HTML endpoint.
-func searchDuckDuckGo(ctx context.Context, client *http.Client, query string, maxResults int) ([]SearchResult, error) {
+func searchDuckDuckGo(ctx context.Context, client *http.Client, query string, maxResults int) ([]DDGSearchResult, error) {
 	if maxResults <= 0 {
 		maxResults = 10
 	}
@@ -64,13 +64,13 @@ func searchDuckDuckGo(ctx context.Context, client *http.Client, query string, ma
 }
 
 // parseSearchResults extracts search results from DuckDuckGo HTML response.
-func parseSearchResults(htmlContent string, maxResults int) ([]SearchResult, error) {
+func parseSearchResults(htmlContent string, maxResults int) ([]DDGSearchResult, error) {
 	doc, err := html.Parse(strings.NewReader(htmlContent))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse HTML: %w", err)
 	}
 
-	var results []SearchResult
+	var results []DDGSearchResult
 	var traverse func(*html.Node)
 
 	traverse = func(n *html.Node) {
@@ -104,8 +104,8 @@ func hasClass(n *html.Node, class string) bool {
 }
 
 // extractResult extracts a search result from a result div node.
-func extractResult(n *html.Node) *SearchResult {
-	result := &SearchResult{}
+func extractResult(n *html.Node) *DDGSearchResult {
+	result := &DDGSearchResult{}
 
 	var traverse func(*html.Node)
 	traverse = func(node *html.Node) {
@@ -171,7 +171,7 @@ func cleanDuckDuckGoURL(rawURL string) string {
 }
 
 // formatSearchResults formats search results for LLM consumption.
-func formatSearchResults(results []SearchResult) string {
+func formatSearchResults(results []DDGSearchResult) string {
 	if len(results) == 0 {
 		return "No results were found for your search query. This could be due to DuckDuckGo's bot detection or the query returned no matches. Please try rephrasing your search or try again in a few minutes."
 	}
