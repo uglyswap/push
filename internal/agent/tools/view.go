@@ -12,11 +12,11 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/uglyswap/crush/pkg/fantasy"
-	"github.com/uglyswap/crush/internal/csync"
-	"github.com/uglyswap/crush/internal/filepathext"
-	"github.com/uglyswap/crush/internal/lsp"
-	"github.com/uglyswap/crush/internal/permission"
+	"github.com/uglyswap/push/pkg/fantasy"
+	"github.com/uglyswap/push/internal/csync"
+	"github.com/uglyswap/push/internal/filepathext"
+	"github.com/uglyswap/push/internal/lsp"
+	"github.com/uglyswap/push/internal/permission"
 )
 
 //go:embed view.md

@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/uglyswap/crush/pkg/fantasy"
+	"github.com/uglyswap/push/pkg/fantasy"
 )
 
 // Name is the provider name for OpenAI.

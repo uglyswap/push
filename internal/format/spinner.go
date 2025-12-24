@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"os"
 
-	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
-	"github.com/uglyswap/crush/internal/tui/components/anim"
+	tea "github.com/uglyswap/push/internal/compat/bubbletea"
+	"github.com/uglyswap/push/internal/tui/components/anim"
 	"github.com/charmbracelet/x/ansi"
 )
 

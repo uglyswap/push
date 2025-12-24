@@ -2,7 +2,7 @@
 // This is a stub replacing github.com/charmbracelet/catwalk/pkg/embedded.
 package embedded
 
-import "github.com/uglyswap/crush/internal/catwalk"
+import "github.com/uglyswap/push/internal/catwalk"
 
 // GetAll returns all embedded providers.
 func GetAll() []catwalk.Provider {

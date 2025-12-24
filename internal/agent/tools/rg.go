@@ -8,7 +8,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/uglyswap/crush/internal/log"
+	"github.com/uglyswap/push/internal/log"
 )
 
 var getRg = sync.OnceValue(func() string {

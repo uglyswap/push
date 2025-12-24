@@ -6,14 +6,14 @@ import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
-	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
-	compattextinput "github.com/uglyswap/crush/internal/compat/bubbles/textinput"
+	tea "github.com/uglyswap/push/internal/compat/bubbletea"
+	compattextinput "github.com/uglyswap/push/internal/compat/bubbles/textinput"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/uglyswap/crush/internal/tui/components/dialogs"
-	"github.com/uglyswap/crush/internal/tui/styles"
-	"github.com/uglyswap/crush/internal/tui/util"
-	"github.com/uglyswap/crush/internal/uicmd"
-	"github.com/uglyswap/crush/internal/uiutil"
+	"github.com/uglyswap/push/internal/tui/components/dialogs"
+	"github.com/uglyswap/push/internal/tui/styles"
+	"github.com/uglyswap/push/internal/tui/util"
+	"github.com/uglyswap/push/internal/uicmd"
+	"github.com/uglyswap/push/internal/uiutil"
 )
 
 const (

@@ -10,11 +10,11 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/x/ansi"
 
-	"github.com/uglyswap/crush/internal/config"
-	"github.com/uglyswap/crush/internal/fsext"
-	"github.com/uglyswap/crush/internal/history"
-	"github.com/uglyswap/crush/internal/tui/components/core"
-	"github.com/uglyswap/crush/internal/tui/styles"
+	"github.com/uglyswap/push/internal/config"
+	"github.com/uglyswap/push/internal/fsext"
+	"github.com/uglyswap/push/internal/history"
+	"github.com/uglyswap/push/internal/tui/components/core"
+	"github.com/uglyswap/push/internal/tui/styles"
 )
 
 // FileHistory represents a file history with initial and latest versions.

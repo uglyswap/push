@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/uglyswap/crush/pkg/fantasy"
+	"github.com/uglyswap/push/pkg/fantasy"
 )
 
 // WebFetchToolAdapter wraps WebFetchTool to implement fantasy.AgentTool.

@@ -5,9 +5,9 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/uglyswap/crush/internal/session"
-	"github.com/uglyswap/crush/internal/tui/components/chat/todos"
-	"github.com/uglyswap/crush/internal/tui/styles"
+	"github.com/uglyswap/push/internal/session"
+	"github.com/uglyswap/push/internal/tui/components/chat/todos"
+	"github.com/uglyswap/push/internal/tui/styles"
 )
 
 func hasIncompleteTodos(todos []session.Todo) bool {

@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/uglyswap/crush/internal/shell"
+	"github.com/uglyswap/push/internal/shell"
 	"github.com/stretchr/testify/require"
 )
 

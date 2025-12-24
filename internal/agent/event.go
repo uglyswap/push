@@ -3,8 +3,8 @@ package agent
 import (
 	"time"
 
-	"github.com/uglyswap/crush/pkg/fantasy"
-	"github.com/uglyswap/crush/internal/event"
+	"github.com/uglyswap/push/pkg/fantasy"
+	"github.com/uglyswap/push/internal/event"
 )
 
 func (a sessionAgent) eventPromptSent(sessionID string) {

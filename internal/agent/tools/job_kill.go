@@ -5,8 +5,8 @@ import (
 	_ "embed"
 	"fmt"
 
-	"github.com/uglyswap/crush/pkg/fantasy"
-	"github.com/uglyswap/crush/internal/shell"
+	"github.com/uglyswap/push/pkg/fantasy"
+	"github.com/uglyswap/push/internal/shell"
 )
 
 const (

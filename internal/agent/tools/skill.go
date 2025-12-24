@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/uglyswap/crush/internal/skills"
+	"github.com/uglyswap/push/internal/skills"
 )
 
 // SkillTool invokes skills from the registry.

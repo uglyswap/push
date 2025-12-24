@@ -1,4 +1,4 @@
-module github.com/uglyswap/crush
+module github.com/uglyswap/push
 
 go 1.25.5
 

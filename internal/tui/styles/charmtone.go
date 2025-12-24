@@ -2,7 +2,7 @@ package styles
 
 import (
 	"github.com/charmbracelet/lipgloss"
-	"github.com/uglyswap/crush/internal/charmtone"
+	"github.com/uglyswap/push/internal/charmtone"
 )
 
 func NewCharmtoneTheme() *Theme {

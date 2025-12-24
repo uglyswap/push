@@ -11,12 +11,12 @@ import (
 
 	"github.com/zeebo/xxh3"
 
-	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
+	tea "github.com/uglyswap/push/internal/compat/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/lucasb-eyer/go-colorful"
 
-	"github.com/uglyswap/crush/internal/csync"
-	"github.com/uglyswap/crush/internal/tui/util"
+	"github.com/uglyswap/push/internal/csync"
+	"github.com/uglyswap/push/internal/tui/util"
 )
 
 const (

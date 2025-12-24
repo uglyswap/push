@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/uglyswap/crush/internal/planmode"
+	"github.com/uglyswap/push/internal/planmode"
 )
 
 // AddPlanStepTool is the tool for adding steps to the current plan.

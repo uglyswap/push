@@ -4,8 +4,8 @@ import (
 	"context"
 	_ "embed"
 
-	"github.com/uglyswap/crush/internal/agent/prompt"
-	"github.com/uglyswap/crush/internal/config"
+	"github.com/uglyswap/push/internal/agent/prompt"
+	"github.com/uglyswap/push/internal/config"
 )
 
 //go:embed templates/coder.md.tpl

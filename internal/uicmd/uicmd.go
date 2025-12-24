@@ -13,12 +13,12 @@ import (
 	"regexp"
 	"strings"
 
-	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
-	"github.com/uglyswap/crush/internal/agent/tools/mcp"
-	"github.com/uglyswap/crush/internal/config"
-	"github.com/uglyswap/crush/internal/home"
-	"github.com/uglyswap/crush/internal/tui/components/chat"
-	"github.com/uglyswap/crush/internal/tui/util"
+	tea "github.com/uglyswap/push/internal/compat/bubbletea"
+	"github.com/uglyswap/push/internal/agent/tools/mcp"
+	"github.com/uglyswap/push/internal/config"
+	"github.com/uglyswap/push/internal/home"
+	"github.com/uglyswap/push/internal/tui/components/chat"
+	"github.com/uglyswap/push/internal/tui/util"
 )
 
 type CommandType uint

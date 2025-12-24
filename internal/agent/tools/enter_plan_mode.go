@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/uglyswap/crush/internal/planmode"
+	"github.com/uglyswap/push/internal/planmode"
 )
 
 // EnterPlanModeTool is the tool for entering plan mode.

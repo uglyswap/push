@@ -5,7 +5,7 @@ import (
 	"image/color"
 	"testing"
 
-	"github.com/uglyswap/crush/internal/tui/components/core"
+	"github.com/uglyswap/push/internal/tui/components/core"
 	"github.com/charmbracelet/x/exp/golden"
 )
 

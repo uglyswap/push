@@ -1,9 +1,9 @@
 package util
 
 import (
-	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
-	compat_tea "github.com/uglyswap/crush/internal/compat/bubbletea"
-	"github.com/uglyswap/crush/internal/uiutil"
+	tea "github.com/uglyswap/push/internal/compat/bubbletea"
+	compat_tea "github.com/uglyswap/push/internal/compat/bubbletea"
+	"github.com/uglyswap/push/internal/uiutil"
 )
 
 // CursorState is the uiutil Cursor type (Mode, Style).

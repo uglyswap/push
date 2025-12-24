@@ -13,10 +13,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/uglyswap/crush/pkg/fantasy"
-	"github.com/uglyswap/crush/internal/config"
-	"github.com/uglyswap/crush/internal/permission"
-	"github.com/uglyswap/crush/internal/shell"
+	"github.com/uglyswap/push/pkg/fantasy"
+	"github.com/uglyswap/push/internal/config"
+	"github.com/uglyswap/push/internal/permission"
+	"github.com/uglyswap/push/internal/shell"
 )
 
 type BashParams struct {

@@ -10,15 +10,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/uglyswap/crush/pkg/fantasy"
-	"github.com/uglyswap/crush/internal/csync"
-	"github.com/uglyswap/crush/internal/diff"
-	"github.com/uglyswap/crush/internal/filepathext"
-	"github.com/uglyswap/crush/internal/fsext"
-	"github.com/uglyswap/crush/internal/history"
+	"github.com/uglyswap/push/pkg/fantasy"
+	"github.com/uglyswap/push/internal/csync"
+	"github.com/uglyswap/push/internal/diff"
+	"github.com/uglyswap/push/internal/filepathext"
+	"github.com/uglyswap/push/internal/fsext"
+	"github.com/uglyswap/push/internal/history"
 
-	"github.com/uglyswap/crush/internal/lsp"
-	"github.com/uglyswap/crush/internal/permission"
+	"github.com/uglyswap/push/internal/lsp"
+	"github.com/uglyswap/push/internal/permission"
 )
 
 //go:embed write.md

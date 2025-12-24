@@ -17,8 +17,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/uglyswap/crush/pkg/fantasy"
-	"github.com/uglyswap/crush/pkg/fantasy/providers/anthropic"
+	"github.com/uglyswap/push/pkg/fantasy"
+	"github.com/uglyswap/push/pkg/fantasy/providers/anthropic"
 )
 
 // Name is the provider name for Bedrock.

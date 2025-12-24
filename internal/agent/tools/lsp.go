@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/uglyswap/crush/internal/lsp"
+	"github.com/uglyswap/push/internal/lsp"
 )
 
 // LSPTool provides LSP operations for code intelligence.

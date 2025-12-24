@@ -1,8 +1,8 @@
-# Crush 🚀
+# Push 🚀
 
 **The Ultimate AI-Powered CLI Tool**
 
-Crush is a next-generation AI CLI tool that combines the power of large language models with advanced orchestration, multi-agent collaboration, and intelligent code assistance. Built to be the most comprehensive AI development assistant available.
+Push is a next-generation AI CLI tool that combines the power of large language models with advanced orchestration, multi-agent collaboration, and intelligent code assistance. Built to be the most comprehensive AI development assistant available.
 
 [![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat&logo=go)](https://go.dev)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -94,8 +94,8 @@ Crush is a next-generation AI CLI tool that combines the power of large language
 
 ```bash
 # Clone the repository
-git clone https://github.com/uglyswap/crush.git
-cd crush
+git clone https://github.com/uglyswap/push.git
+cd push
 
 # Download dependencies
 go mod download
@@ -103,7 +103,7 @@ go mod download
 # Build and install
 go install .
 
-# The binary will be installed to $GOPATH/bin/crush (or $HOME/go/bin/crush)
+# The binary will be installed to $GOPATH/bin/push (or $HOME/go/bin/push)
 # Make sure this directory is in your PATH
 ```
 
@@ -111,23 +111,23 @@ go install .
 
 ```bash
 # Clone the repository
-git clone https://github.com/uglyswap/crush.git
-cd crush
+git clone https://github.com/uglyswap/push.git
+cd push
 
 # Download dependencies and build
 go mod download
-go build -o crush .
+go build -o push .
 
 # Install globally (Linux/macOS)
-sudo mv crush /usr/local/bin/
+sudo mv push /usr/local/bin/
 
 # Or add to PATH (Windows)
-# Move crush.exe to a directory in your PATH
+# Move push.exe to a directory in your PATH
 ```
 
 ### From Releases
 
-Download pre-built binaries from the [Releases](https://github.com/uglyswap/crush/releases) page.
+Download pre-built binaries from the [Releases](https://github.com/uglyswap/push/releases) page.
 
 ### Compatibility Notes
 
@@ -141,10 +141,10 @@ This version uses a compatibility layer (`internal/compat/`) to work with bubble
 
 ```bash
 # Start interactive session
-crush
+push
 
 # Run with a prompt
-crush "Explain this codebase"
+push "Explain this codebase"
 
 # Run in a specific directory
 crush --cwd /path/to/project "Add tests for the API"
@@ -155,7 +155,7 @@ crush --thinking ultrathink "Refactor the authentication system"
 
 ### Configuration
 
-Create `~/.crush/config.yaml`:
+Create `~/.push/config.yaml`:
 
 ```yaml
 # API Configuration
@@ -173,8 +173,8 @@ max_tokens: 8192
 
 # Skills
 skills_directories:
-  - ~/.crush/skills
-  - ./.crush/skills
+  - ~/.push/skills
+  - ./.push/skills
 
 # Cache
 cache:
@@ -210,7 +210,7 @@ Supported providers:
 
 ## 🧠 Extended Thinking
 
-Crush supports extended thinking mode for deeper reasoning on complex tasks.
+Push supports extended thinking mode for deeper reasoning on complex tasks.
 
 ### Thinking Levels
 
@@ -246,7 +246,7 @@ Crush automatically increases thinking depth when it detects:
 
 ## 🤖 Subagent Execution Engine
 
-Crush features a powerful subagent execution system that connects specialized agents to the LLM with squad-specific prompts and quality scoring.
+Push features a powerful subagent execution system that connects specialized agents to the LLM with squad-specific prompts and quality scoring.
 
 ### Executor Architecture
 
@@ -375,9 +375,9 @@ func GetThinkingLevelForTask(task *Task, keywords []string) ThinkingLevel {
 ## 🏗️ Architecture
 
 ```
-crush/
+push/
 ├── cmd/
-│   └── crush/              # Main entry point
+│   └── push/              # Main entry point
 ├── internal/
 │   ├── agent/              # Core agent implementation
 │   │   └── tools/          # All tool implementations
@@ -427,10 +427,10 @@ crush/
 ### Multi-Agent Task
 
 ```bash
-crush "Build a REST API with authentication, tests, and documentation"
+push "Build a REST API with authentication, tests, and documentation"
 ```
 
-Crush will:
+Push will:
 1. Analyze the task and select appropriate agents
 2. Create a session with snapshots for safety
 3. Execute agents in optimal sequence
@@ -440,10 +440,10 @@ Crush will:
 ### Plan Mode
 
 ```bash
-crush "Refactor the authentication system to use JWT"
+push "Refactor the authentication system to use JWT"
 ```
 
-Crush will:
+Push will:
 1. Enter plan mode automatically for complex tasks
 2. Explore the codebase
 3. Present an implementation plan for approval
@@ -453,18 +453,18 @@ Crush will:
 
 ```bash
 # Invoke a skill
-crush "/commit -m 'Add new feature'"
+push "/commit -m 'Add new feature'"
 
 # Review a PR
-crush "/review-pr 123"
+push "/review-pr 123"
 
 # Use a specialized skill
-crush "/supabase-patterns Create RLS policies for user table"
+push "/supabase-patterns Create RLS policies for user table"
 ```
 
 ### Interactive Questions
 
-Crush will ask clarifying questions when needed:
+Push will ask clarifying questions when needed:
 
 ```
 ? Which authentication method do you prefer?
@@ -478,7 +478,7 @@ Crush will ask clarifying questions when needed:
 
 ```go
 // Programmatic usage example
-import "github.com/uglyswap/crush/internal/orchestrator"
+import "github.com/uglyswap/push/internal/orchestrator"
 
 // Create orchestrator
 orch := orchestrator.NewOrchestrator()
@@ -506,7 +506,7 @@ if result.Score.WeightedTotal() < 70 {
 
 ## 🔧 Creating Custom Skills
 
-Create a markdown file in `~/.crush/skills/my-skill.md`:
+Create a markdown file in `~/.push/skills/my-skill.md`:
 
 ```markdown
 ---
@@ -534,8 +534,8 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guid
 
 ```bash
 # Clone
-git clone https://github.com/uglyswap/crush.git
-cd crush
+git clone https://github.com/uglyswap/push.git
+cd push
 
 # Install dependencies
 go mod download
@@ -544,10 +544,10 @@ go mod download
 go test ./...
 
 # Build
-go build -o crush .
+go build -o push .
 
 # Run locally
-./crush
+./push
 ```
 
 ### Running Tests
@@ -599,4 +599,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Made with ❤️ by the Crush Team**
+**Made with ❤️ by the Push Team**

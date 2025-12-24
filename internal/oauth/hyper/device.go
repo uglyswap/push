@@ -13,9 +13,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/uglyswap/crush/internal/agent/hyper"
-	"github.com/uglyswap/crush/internal/event"
-	"github.com/uglyswap/crush/internal/oauth"
+	"github.com/uglyswap/push/internal/agent/hyper"
+	"github.com/uglyswap/push/internal/event"
+	"github.com/uglyswap/push/internal/oauth"
 )
 
 // DeviceAuthResponse contains the response from the device authorization endpoint.

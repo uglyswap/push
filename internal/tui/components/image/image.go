@@ -7,7 +7,7 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 
-	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
+	tea "github.com/uglyswap/push/internal/compat/bubbletea"
 )
 
 type Model struct {

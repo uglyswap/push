@@ -6,10 +6,10 @@ import (
 
 	"github.com/charmbracelet/lipgloss"
 
-	"github.com/uglyswap/crush/internal/agent/tools/mcp"
-	"github.com/uglyswap/crush/internal/config"
-	"github.com/uglyswap/crush/internal/tui/components/core"
-	"github.com/uglyswap/crush/internal/tui/styles"
+	"github.com/uglyswap/push/internal/agent/tools/mcp"
+	"github.com/uglyswap/push/internal/config"
+	"github.com/uglyswap/push/internal/tui/components/core"
+	"github.com/uglyswap/push/internal/tui/styles"
 )
 
 // RenderOptions contains options for rendering MCP lists.

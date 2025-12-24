@@ -11,10 +11,10 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/lucasb-eyer/go-colorful"
 	"github.com/rivo/uniseg"
-	"github.com/uglyswap/crush/internal/charmtone"
-	"github.com/uglyswap/crush/internal/compat/bubbles/textarea"
-	"github.com/uglyswap/crush/internal/compat/bubbles/textinput"
-	"github.com/uglyswap/crush/internal/tui/exp/diffview"
+	"github.com/uglyswap/push/internal/charmtone"
+	"github.com/uglyswap/push/internal/compat/bubbles/textarea"
+	"github.com/uglyswap/push/internal/compat/bubbles/textinput"
+	"github.com/uglyswap/push/internal/tui/exp/diffview"
 )
 
 const (

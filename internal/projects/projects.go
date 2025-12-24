@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/uglyswap/crush/internal/config"
+	"github.com/uglyswap/push/internal/config"
 )
 
 const projectsFileName = "projects.json"

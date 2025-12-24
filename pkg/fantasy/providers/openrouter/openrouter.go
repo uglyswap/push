@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/uglyswap/crush/pkg/fantasy"
-	"github.com/uglyswap/crush/pkg/fantasy/providers/openai"
+	"github.com/uglyswap/push/pkg/fantasy"
+	"github.com/uglyswap/push/pkg/fantasy/providers/openai"
 )
 
 // Name is the provider name for OpenRouter.

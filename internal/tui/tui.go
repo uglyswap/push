@@ -7,31 +7,31 @@ import (
 	"time"
 
 	"github.com/charmbracelet/bubbles/key"
-	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
+	tea "github.com/uglyswap/push/internal/compat/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/uglyswap/crush/internal/agent/tools/mcp"
-	"github.com/uglyswap/crush/internal/app"
-	"github.com/uglyswap/crush/internal/config"
-	"github.com/uglyswap/crush/internal/event"
-	"github.com/uglyswap/crush/internal/permission"
-	"github.com/uglyswap/crush/internal/pubsub"
-	cmpChat "github.com/uglyswap/crush/internal/tui/components/chat"
-	"github.com/uglyswap/crush/internal/tui/components/chat/splash"
-	"github.com/uglyswap/crush/internal/tui/components/completions"
-	"github.com/uglyswap/crush/internal/tui/components/core"
-	"github.com/uglyswap/crush/internal/tui/components/core/layout"
-	"github.com/uglyswap/crush/internal/tui/components/core/status"
-	"github.com/uglyswap/crush/internal/tui/components/dialogs"
-	"github.com/uglyswap/crush/internal/tui/components/dialogs/commands"
-	"github.com/uglyswap/crush/internal/tui/components/dialogs/filepicker"
-	"github.com/uglyswap/crush/internal/tui/components/dialogs/models"
-	"github.com/uglyswap/crush/internal/tui/components/dialogs/permissions"
-	"github.com/uglyswap/crush/internal/tui/components/dialogs/quit"
-	"github.com/uglyswap/crush/internal/tui/components/dialogs/sessions"
-	"github.com/uglyswap/crush/internal/tui/page"
-	"github.com/uglyswap/crush/internal/tui/page/chat"
-	"github.com/uglyswap/crush/internal/tui/styles"
-	"github.com/uglyswap/crush/internal/tui/util"
+	"github.com/uglyswap/push/internal/agent/tools/mcp"
+	"github.com/uglyswap/push/internal/app"
+	"github.com/uglyswap/push/internal/config"
+	"github.com/uglyswap/push/internal/event"
+	"github.com/uglyswap/push/internal/permission"
+	"github.com/uglyswap/push/internal/pubsub"
+	cmpChat "github.com/uglyswap/push/internal/tui/components/chat"
+	"github.com/uglyswap/push/internal/tui/components/chat/splash"
+	"github.com/uglyswap/push/internal/tui/components/completions"
+	"github.com/uglyswap/push/internal/tui/components/core"
+	"github.com/uglyswap/push/internal/tui/components/core/layout"
+	"github.com/uglyswap/push/internal/tui/components/core/status"
+	"github.com/uglyswap/push/internal/tui/components/dialogs"
+	"github.com/uglyswap/push/internal/tui/components/dialogs/commands"
+	"github.com/uglyswap/push/internal/tui/components/dialogs/filepicker"
+	"github.com/uglyswap/push/internal/tui/components/dialogs/models"
+	"github.com/uglyswap/push/internal/tui/components/dialogs/permissions"
+	"github.com/uglyswap/push/internal/tui/components/dialogs/quit"
+	"github.com/uglyswap/push/internal/tui/components/dialogs/sessions"
+	"github.com/uglyswap/push/internal/tui/page"
+	"github.com/uglyswap/push/internal/tui/page/chat"
+	"github.com/uglyswap/push/internal/tui/styles"
+	"github.com/uglyswap/push/internal/tui/util"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
@@ -349,18 +349,8 @@ func (a *appModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return a, tea.Batch(cmds...)
 	// Update Available
 	case pubsub.UpdateAvailableMsg:
-		// Show update notification in status bar
-		statusMsg := fmt.Sprintf("Crush update available: v%s → v%s.", msg.CurrentVersion, msg.LatestVersion)
-		if msg.IsDevelopment {
-			statusMsg = fmt.Sprintf("This is a development version of Crush. The latest version is v%s.", msg.LatestVersion)
-		}
-		s, statusCmd := a.status.Update(util.InfoMsg{
-			Type: util.InfoTypeUpdate,
-			Msg:  statusMsg,
-			TTL:  10 * time.Second,
-		})
-		a.status = s.(status.StatusCmp)
-		return a, statusCmd
+		// Update notifications disabled for push fork
+		return a, nil
 	}
 	s, _ := a.status.Update(msg)
 	a.status = s.(status.StatusCmp)

@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/uglyswap/crush/internal/env"
-	"github.com/uglyswap/crush/internal/shell"
+	"github.com/uglyswap/push/internal/env"
+	"github.com/uglyswap/push/internal/shell"
 )
 
 type VariableResolver interface {

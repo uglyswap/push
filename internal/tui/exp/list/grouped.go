@@ -1,9 +1,9 @@
 package list
 
 import (
-	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
-	"github.com/uglyswap/crush/internal/tui/components/core/layout"
-	"github.com/uglyswap/crush/internal/tui/util"
+	tea "github.com/uglyswap/push/internal/compat/bubbletea"
+	"github.com/uglyswap/push/internal/tui/components/core/layout"
+	"github.com/uglyswap/push/internal/tui/util"
 )
 
 type Group[T Item] struct {

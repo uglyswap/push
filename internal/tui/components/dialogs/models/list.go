@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"slices"
 
-	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
-	"github.com/uglyswap/crush/internal/catwalk"
-	"github.com/uglyswap/crush/internal/config"
-	"github.com/uglyswap/crush/internal/tui/exp/list"
-	"github.com/uglyswap/crush/internal/tui/styles"
-	"github.com/uglyswap/crush/internal/tui/util"
+	tea "github.com/uglyswap/push/internal/compat/bubbletea"
+	"github.com/uglyswap/push/internal/catwalk"
+	"github.com/uglyswap/push/internal/config"
+	"github.com/uglyswap/push/internal/tui/exp/list"
+	"github.com/uglyswap/push/internal/tui/styles"
+	"github.com/uglyswap/push/internal/tui/util"
 )
 
 type listModel = list.FilterableGroupList[list.CompletionItem[ModelOption]]

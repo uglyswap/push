@@ -17,12 +17,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/uglyswap/crush/internal/config"
-	"github.com/uglyswap/crush/internal/csync"
-	"github.com/uglyswap/crush/internal/home"
-	"github.com/uglyswap/crush/internal/permission"
-	"github.com/uglyswap/crush/internal/pubsub"
-	"github.com/uglyswap/crush/internal/version"
+	"github.com/uglyswap/push/internal/config"
+	"github.com/uglyswap/push/internal/csync"
+	"github.com/uglyswap/push/internal/home"
+	"github.com/uglyswap/push/internal/permission"
+	"github.com/uglyswap/push/internal/pubsub"
+	"github.com/uglyswap/push/internal/version"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 

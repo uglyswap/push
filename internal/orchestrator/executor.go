@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/uglyswap/crush/internal/config"
-	"github.com/uglyswap/crush/pkg/fantasy"
+	"github.com/uglyswap/push/internal/config"
+	"github.com/uglyswap/push/pkg/fantasy"
 )
 
 // ThinkingLevel represents the extended thinking budget for agent execution.

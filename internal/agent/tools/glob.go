@@ -11,8 +11,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/uglyswap/crush/pkg/fantasy"
-	"github.com/uglyswap/crush/internal/fsext"
+	"github.com/uglyswap/push/pkg/fantasy"
+	"github.com/uglyswap/push/internal/fsext"
 )
 
 const GlobToolName = "glob"

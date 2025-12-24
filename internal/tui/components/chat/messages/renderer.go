@@ -9,14 +9,14 @@ import (
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/lipgloss/tree"
-	"github.com/uglyswap/crush/internal/agent"
-	"github.com/uglyswap/crush/internal/agent/tools"
-	"github.com/uglyswap/crush/internal/ansiext"
-	"github.com/uglyswap/crush/internal/fsext"
-	"github.com/uglyswap/crush/internal/tui/components/chat/todos"
-	"github.com/uglyswap/crush/internal/tui/components/core"
-	"github.com/uglyswap/crush/internal/tui/highlight"
-	"github.com/uglyswap/crush/internal/tui/styles"
+	"github.com/uglyswap/push/internal/agent"
+	"github.com/uglyswap/push/internal/agent/tools"
+	"github.com/uglyswap/push/internal/ansiext"
+	"github.com/uglyswap/push/internal/fsext"
+	"github.com/uglyswap/push/internal/tui/components/chat/todos"
+	"github.com/uglyswap/push/internal/tui/components/core"
+	"github.com/uglyswap/push/internal/tui/highlight"
+	"github.com/uglyswap/push/internal/tui/styles"
 	"github.com/charmbracelet/x/ansi"
 )
 

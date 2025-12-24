@@ -2,7 +2,7 @@ package diffview
 
 import (
 	"github.com/charmbracelet/lipgloss"
-	"github.com/uglyswap/crush/internal/charmtone"
+	"github.com/uglyswap/push/internal/charmtone"
 )
 
 // LineStyle defines the styles for a given line type in the diff view.

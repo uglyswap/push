@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/uglyswap/crush/pkg/fantasy"
-	"github.com/uglyswap/crush/internal/filepathext"
-	"github.com/uglyswap/crush/internal/permission"
+	"github.com/uglyswap/push/pkg/fantasy"
+	"github.com/uglyswap/push/internal/filepathext"
+	"github.com/uglyswap/push/internal/permission"
 )
 
 type DownloadParams struct {

@@ -14,22 +14,22 @@ import (
 	"strings"
 	"time"
 
-	"github.com/uglyswap/crush/internal/catwalk"
-	hyperp "github.com/uglyswap/crush/internal/agent/hyper"
-	"github.com/uglyswap/crush/internal/csync"
-	"github.com/uglyswap/crush/internal/env"
-	"github.com/uglyswap/crush/internal/oauth"
-	"github.com/uglyswap/crush/internal/oauth/claude"
-	"github.com/uglyswap/crush/internal/oauth/copilot"
-	"github.com/uglyswap/crush/internal/oauth/hyper"
+	"github.com/uglyswap/push/internal/catwalk"
+	hyperp "github.com/uglyswap/push/internal/agent/hyper"
+	"github.com/uglyswap/push/internal/csync"
+	"github.com/uglyswap/push/internal/env"
+	"github.com/uglyswap/push/internal/oauth"
+	"github.com/uglyswap/push/internal/oauth/claude"
+	"github.com/uglyswap/push/internal/oauth/copilot"
+	"github.com/uglyswap/push/internal/oauth/hyper"
 	"github.com/invopop/jsonschema"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 )
 
 const (
-	appName              = "crush"
-	defaultDataDirectory = ".crush"
+	appName              = "push"
+	defaultDataDirectory = ".push"
 	defaultInitializeAs  = "AGENTS.md"
 )
 
@@ -41,12 +41,12 @@ var defaultContextPaths = []string{
 	"CLAUDE.local.md",
 	"GEMINI.md",
 	"gemini.md",
-	"crush.md",
-	"crush.local.md",
-	"Crush.md",
-	"Crush.local.md",
-	"CRUSH.md",
-	"CRUSH.local.md",
+	"push.md",
+	"push.local.md",
+	"Push.md",
+	"Push.local.md",
+	"PUSH.md",
+	"PUSH.local.md",
 	"AGENTS.md",
 	"agents.md",
 	"Agents.md",
@@ -255,7 +255,7 @@ func (Attribution) JSONSchemaExtend(schema *jsonschema.Schema) {
 }
 
 type Options struct {
-	ContextPaths              []string     `json:"context_paths,omitempty" jsonschema:"description=Paths to files containing context information for the AI,example=.cursorrules,example=CRUSH.md"`
+	ContextPaths              []string     `json:"context_paths,omitempty" jsonschema:"description=Paths to files containing context information for the AI,example=.cursorrules,example=PUSH.md"`
 	TUI                       *TUIOptions  `json:"tui,omitempty" jsonschema:"description=Terminal user interface options"`
 	Debug                     bool         `json:"debug,omitempty" jsonschema:"description=Enable debug logging,default=false"`
 	DebugLSP                  bool         `json:"debug_lsp,omitempty" jsonschema:"description=Enable debug logging for LSP servers,default=false"`
@@ -266,7 +266,7 @@ type Options struct {
 	DisableDynamicModelFetch  bool         `json:"disable_dynamic_model_fetch,omitempty" jsonschema:"description=Disable fetching models dynamically from provider APIs,default=false"`
 	Attribution               *Attribution `json:"attribution,omitempty" jsonschema:"description=Attribution settings for generated content"`
 	DisableMetrics            bool         `json:"disable_metrics,omitempty" jsonschema:"description=Disable sending metrics,default=false"`
-	InitializeAs              string       `json:"initialize_as,omitempty" jsonschema:"description=Name of the context file to create/update during project initialization,default=AGENTS.md,example=AGENTS.md,example=CRUSH.md,example=CLAUDE.md,example=docs/LLMs.md"`
+	InitializeAs              string       `json:"initialize_as,omitempty" jsonschema:"description=Name of the context file to create/update during project initialization,default=AGENTS.md,example=AGENTS.md,example=PUSH.md,example=CLAUDE.md,example=docs/LLMs.md"`
 }
 
 type MCPs map[string]MCPConfig

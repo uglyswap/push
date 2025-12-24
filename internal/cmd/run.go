@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"strings"
 
-	"github.com/uglyswap/crush/internal/event"
+	"github.com/uglyswap/push/internal/event"
 	"github.com/spf13/cobra"
 )
 

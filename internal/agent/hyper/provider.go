@@ -23,8 +23,8 @@ import (
 
 	"charm.land/fantasy"
 	"charm.land/fantasy/object"
-	"github.com/uglyswap/crush/internal/catwalk"
-	"github.com/uglyswap/crush/internal/event"
+	"github.com/uglyswap/push/internal/catwalk"
+	"github.com/uglyswap/push/internal/event"
 )
 
 //go:generate wget -O provider.json https://console.charm.land/api/v1/provider

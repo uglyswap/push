@@ -5,7 +5,7 @@ import (
 	"log/slog"
 
 	"charm.land/lipgloss/v2"
-	"github.com/uglyswap/crush/internal/config"
+	"github.com/uglyswap/push/internal/config"
 	"github.com/charmbracelet/x/exp/charmtone"
 	"github.com/spf13/cobra"
 )

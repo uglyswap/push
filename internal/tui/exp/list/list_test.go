@@ -5,10 +5,10 @@ import (
 	"strings"
 	"testing"
 
-	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
+	tea "github.com/uglyswap/push/internal/compat/bubbletea"
 	"charm.land/lipgloss/v2"
-	"github.com/uglyswap/crush/internal/tui/components/core/layout"
-	"github.com/uglyswap/crush/internal/tui/util"
+	"github.com/uglyswap/push/internal/tui/components/core/layout"
+	"github.com/uglyswap/push/internal/tui/util"
 	"github.com/charmbracelet/x/exp/golden"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"

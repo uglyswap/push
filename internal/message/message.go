@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/uglyswap/crush/internal/db"
-	"github.com/uglyswap/crush/internal/pubsub"
+	"github.com/uglyswap/push/internal/db"
+	"github.com/uglyswap/push/internal/pubsub"
 	"github.com/google/uuid"
 )
 

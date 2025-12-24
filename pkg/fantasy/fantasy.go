@@ -1,5 +1,5 @@
 // Package fantasy provides a unified LLM abstraction layer for multiple AI providers.
-// This is a replacement for github.com/uglyswap/crush/pkg/fantasy that uses public APIs.
+// This is a replacement for github.com/uglyswap/push/pkg/fantasy that uses public APIs.
 package fantasy
 
 import (

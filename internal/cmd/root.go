@@ -12,17 +12,17 @@ import (
 	"strconv"
 	"strings"
 
-	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
+	tea "github.com/uglyswap/push/internal/compat/bubbletea"
 	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/colorprofile"
-	"github.com/uglyswap/crush/internal/app"
-	"github.com/uglyswap/crush/internal/config"
-	"github.com/uglyswap/crush/internal/db"
-	"github.com/uglyswap/crush/internal/event"
-	"github.com/uglyswap/crush/internal/projects"
-	"github.com/uglyswap/crush/internal/stringext"
-	"github.com/uglyswap/crush/internal/tui"
-	"github.com/uglyswap/crush/internal/version"
+	"github.com/uglyswap/push/internal/app"
+	"github.com/uglyswap/push/internal/config"
+	"github.com/uglyswap/push/internal/db"
+	"github.com/uglyswap/push/internal/event"
+	"github.com/uglyswap/push/internal/projects"
+	"github.com/uglyswap/push/internal/stringext"
+	"github.com/uglyswap/push/internal/tui"
+	"github.com/uglyswap/push/internal/version"
 	"github.com/charmbracelet/fang"
 	uv "github.com/charmbracelet/ultraviolet"
 	"github.com/charmbracelet/x/ansi"
@@ -33,7 +33,7 @@ import (
 
 func init() {
 	rootCmd.PersistentFlags().StringP("cwd", "c", "", "Current working directory")
-	rootCmd.PersistentFlags().StringP("data-dir", "D", "", "Custom crush data directory")
+	rootCmd.PersistentFlags().StringP("data-dir", "D", "", "Custom push data directory")
 	rootCmd.PersistentFlags().BoolP("debug", "d", false, "Debug")
 	rootCmd.Flags().BoolP("help", "h", false, "Help")
 	rootCmd.Flags().BoolP("yolo", "y", false, "Automatically accept all permissions (dangerous mode)")
@@ -50,32 +50,32 @@ func init() {
 }
 
 var rootCmd = &cobra.Command{
-	Use:   "crush",
+	Use:   "push",
 	Short: "Terminal-based AI assistant for software development",
-	Long: `Crush is a powerful terminal-based AI assistant that helps with software development tasks.
+	Long: `Push is a powerful terminal-based AI assistant that helps with software development tasks.
 It provides an interactive chat interface with AI capabilities, code analysis, and LSP integration
 to assist developers in writing, debugging, and understanding code directly from the terminal.`,
 	Example: `
 # Run in interactive mode
-crush
+push
 
 # Run with debug logging
-crush -d
+push -d
 
 # Run with debug logging in a specific directory
-crush -d -c /path/to/project
+push -d -c /path/to/project
 
 # Run with custom data directory
-crush -D /path/to/custom/.crush
+push -D /path/to/custom/.push
 
 # Print version
-crush -v
+push -v
 
 # Run a single non-interactive prompt
-crush run "Explain the use of context in Go"
+push run "Explain the use of context in Go"
 
 # Run in dangerous mode (auto-accept all permissions)
-crush -y
+push -y
   `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		app, err := setupAppWithProgressBar(cmd)
@@ -103,7 +103,7 @@ crush -y
 		if _, err := program.Run(); err != nil {
 			event.Error(err)
 			slog.Error("TUI run error", "error", err)
-			return errors.New("Crush crashed. If metrics are enabled, we were notified about it. If you'd like to report it, please copy the stacktrace above and open an issue at https://github.com/uglyswap/crush/issues/new?template=bug.yml") //nolint:staticcheck
+			return errors.New("Push crashed. If metrics are enabled, we were notified about it. If you'd like to report it, please copy the stacktrace above and open an issue at https://github.com/uglyswap/push/issues/new?template=bug.yml") //nolint:staticcheck
 		}
 		return nil
 	},
@@ -112,18 +112,18 @@ crush -y
 	},
 }
 
-var heartbit = lipgloss.NewStyle().Foreground(charmtone.Dolly).SetString(`
-    ▄▄▄▄▄▄▄▄    ▄▄▄▄▄▄▄▄
-  ███████████  ███████████
-████████████████████████████
-████████████████████████████
-██████████▀██████▀██████████
-██████████ ██████ ██████████
-▀▀██████▄████▄▄████▄██████▀▀
-  ████████████████████████
-    ████████████████████
-       ▀▀██████████▀▀
-           ▀▀▀▀▀▀
+var pushLogo = lipgloss.NewStyle().Foreground(charmtone.Dolly).SetString(`
+        ▄▄██▄▄
+      ▄████████▄
+    ▄██████████████▄
+  ▄██████████████████▄
+    ▀▀██████████▀▀
+        ██████
+        ██████
+        ██████
+        ██████
+        ██████
+    ████████████████
 `)
 
 // copied from cobra:
@@ -132,7 +132,7 @@ const defaultVersionTemplate = `{{with .DisplayName}}{{printf "%s " .}}{{end}}{{
 
 func Execute() {
 	// NOTE: very hacky: we create a colorprofile writer with STDOUT, then make
-	// it forward to a bytes.Buffer, write the colored heartbit to it, and then
+	// it forward to a bytes.Buffer, write the colored pushLogo to it, and then
 	// finally prepend it in the version template.
 	// Unfortunately cobra doesn't give us a way to set a function to handle
 	// printing the version, and PreRunE runs after the version is already
@@ -142,7 +142,7 @@ func Execute() {
 		var b bytes.Buffer
 		w := colorprofile.NewWriter(os.Stdout, os.Environ())
 		w.Forward = &b
-		_, _ = w.WriteString(heartbit.String())
+		_, _ = w.WriteString(pushLogo.String())
 		rootCmd.SetVersionTemplate(b.String() + "\n" + defaultVersionTemplate)
 	}
 	if err := fang.Execute(
@@ -199,7 +199,7 @@ func setupApp(cmd *cobra.Command) (*app.App, error) {
 	}
 	cfg.Permissions.SkipRequests = yolo
 
-	if err := createDotCrushDir(cfg.Options.DataDirectory); err != nil {
+	if err := createDotPushDir(cfg.Options.DataDirectory); err != nil {
 		return nil, err
 	}
 
@@ -229,7 +229,7 @@ func setupApp(cmd *cobra.Command) (*app.App, error) {
 }
 
 func shouldEnableMetrics() bool {
-	if v, _ := strconv.ParseBool(os.Getenv("CRUSH_DISABLE_METRICS")); v {
+	if v, _ := strconv.ParseBool(os.Getenv("PUSH_DISABLE_METRICS")); v {
 		return false
 	}
 	if v, _ := strconv.ParseBool(os.Getenv("DO_NOT_TRACK")); v {
@@ -276,7 +276,7 @@ func ResolveCwd(cmd *cobra.Command) (string, error) {
 	return cwd, nil
 }
 
-func createDotCrushDir(dir string) error {
+func createDotPushDir(dir string) error {
 	if err := os.MkdirAll(dir, 0o700); err != nil {
 		return fmt.Errorf("failed to create data directory: %q %w", dir, err)
 	}

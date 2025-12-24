@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/uglyswap/crush/internal/config"
-	"github.com/uglyswap/crush/internal/env"
+	"github.com/uglyswap/push/internal/config"
+	"github.com/uglyswap/push/internal/env"
 )
 
 func TestClient(t *testing.T) {

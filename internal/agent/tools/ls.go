@@ -9,11 +9,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/uglyswap/crush/pkg/fantasy"
-	"github.com/uglyswap/crush/internal/config"
-	"github.com/uglyswap/crush/internal/filepathext"
-	"github.com/uglyswap/crush/internal/fsext"
-	"github.com/uglyswap/crush/internal/permission"
+	"github.com/uglyswap/push/pkg/fantasy"
+	"github.com/uglyswap/push/internal/config"
+	"github.com/uglyswap/push/internal/filepathext"
+	"github.com/uglyswap/push/internal/fsext"
+	"github.com/uglyswap/push/internal/permission"
 )
 
 type LSParams struct {

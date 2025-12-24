@@ -10,7 +10,7 @@ import (
 	"os/exec"
 	"time"
 
-	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
+	tea "github.com/uglyswap/push/internal/compat/bubbletea"
 	"mvdan.cc/sh/v3/shell"
 )
 

@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"runtime"
 
-	"github.com/uglyswap/crush/internal/version"
+	"github.com/uglyswap/push/internal/version"
 	"github.com/posthog/posthog-go"
 )
 

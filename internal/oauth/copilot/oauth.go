@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/uglyswap/crush/internal/oauth"
+	"github.com/uglyswap/push/internal/oauth"
 )
 
 const (

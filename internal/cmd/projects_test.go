@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/uglyswap/crush/internal/projects"
+	"github.com/uglyswap/push/internal/projects"
 	"github.com/stretchr/testify/require"
 )
 

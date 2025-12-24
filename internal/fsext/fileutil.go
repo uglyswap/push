@@ -11,8 +11,8 @@ import (
 
 	"github.com/bmatcuk/doublestar/v4"
 	"github.com/charlievieth/fastwalk"
-	"github.com/uglyswap/crush/internal/csync"
-	"github.com/uglyswap/crush/internal/home"
+	"github.com/uglyswap/push/internal/csync"
+	"github.com/uglyswap/push/internal/home"
 )
 
 type FileInfo struct {

@@ -11,8 +11,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/uglyswap/crush/internal/catwalk"
-	"github.com/uglyswap/crush/internal/catwalk/embedded"
+	"github.com/uglyswap/push/internal/catwalk"
+	"github.com/uglyswap/push/internal/catwalk/embedded"
 )
 
 // ModelFetcher fetches models from provider APIs.

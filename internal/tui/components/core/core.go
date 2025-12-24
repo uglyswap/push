@@ -8,8 +8,8 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/alecthomas/chroma/v2"
-	"github.com/uglyswap/crush/internal/tui/exp/diffview"
-	"github.com/uglyswap/crush/internal/tui/styles"
+	"github.com/uglyswap/push/internal/tui/exp/diffview"
+	"github.com/uglyswap/push/internal/tui/styles"
 	"github.com/charmbracelet/x/ansi"
 )
 

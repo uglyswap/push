@@ -5,7 +5,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/uglyswap/crush/internal/env"
+	"github.com/uglyswap/push/internal/env"
 	"github.com/stretchr/testify/require"
 )
 

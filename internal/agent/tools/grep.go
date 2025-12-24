@@ -18,8 +18,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/uglyswap/crush/pkg/fantasy"
-	"github.com/uglyswap/crush/internal/fsext"
+	"github.com/uglyswap/push/pkg/fantasy"
+	"github.com/uglyswap/push/internal/fsext"
 )
 
 // regexCache provides thread-safe caching of compiled regex patterns

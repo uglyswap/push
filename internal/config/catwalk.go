@@ -7,8 +7,8 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/uglyswap/crush/internal/catwalk"
-	"github.com/uglyswap/crush/internal/catwalk/embedded"
+	"github.com/uglyswap/push/internal/catwalk"
+	"github.com/uglyswap/push/internal/catwalk/embedded"
 )
 
 type catwalkClient interface {

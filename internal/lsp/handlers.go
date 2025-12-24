@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"log/slog"
 
-	"github.com/uglyswap/crush/internal/config"
-	"github.com/uglyswap/crush/internal/lsp/util"
+	"github.com/uglyswap/push/internal/config"
+	"github.com/uglyswap/push/internal/lsp/util"
 	"github.com/charmbracelet/x/powernap/pkg/lsp/protocol"
 )
 

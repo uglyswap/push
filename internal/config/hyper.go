@@ -11,8 +11,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/uglyswap/crush/internal/catwalk"
-	"github.com/uglyswap/crush/internal/agent/hyper"
+	"github.com/uglyswap/push/internal/catwalk"
+	"github.com/uglyswap/push/internal/agent/hyper"
 	xetag "github.com/charmbracelet/x/etag"
 )
 

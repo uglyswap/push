@@ -7,13 +7,13 @@ import (
 	"time"
 
 	"github.com/charmbracelet/bubbles/spinner"
-	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
-	compat_tea "github.com/uglyswap/crush/internal/compat/bubbletea"
-	"github.com/uglyswap/crush/internal/compat/lipgloss"
-	"github.com/uglyswap/crush/internal/oauth"
-	"github.com/uglyswap/crush/internal/oauth/hyper"
-	"github.com/uglyswap/crush/internal/tui/styles"
-	"github.com/uglyswap/crush/internal/tui/util"
+	tea "github.com/uglyswap/push/internal/compat/bubbletea"
+	compat_tea "github.com/uglyswap/push/internal/compat/bubbletea"
+	"github.com/uglyswap/push/internal/compat/lipgloss"
+	"github.com/uglyswap/push/internal/oauth"
+	"github.com/uglyswap/push/internal/oauth/hyper"
+	"github.com/uglyswap/push/internal/tui/styles"
+	"github.com/uglyswap/push/internal/tui/util"
 	"github.com/pkg/browser"
 )
 

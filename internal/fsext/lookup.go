@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/uglyswap/crush/internal/home"
+	"github.com/uglyswap/push/internal/home"
 )
 
 // Lookup searches for a target files or directories starting from dir

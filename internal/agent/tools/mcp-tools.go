@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/uglyswap/crush/pkg/fantasy"
-	"github.com/uglyswap/crush/internal/agent/tools/mcp"
-	"github.com/uglyswap/crush/internal/permission"
+	"github.com/uglyswap/push/pkg/fantasy"
+	"github.com/uglyswap/push/internal/agent/tools/mcp"
+	"github.com/uglyswap/push/internal/permission"
 )
 
 // GetMCPTools gets all the currently available MCP tools.

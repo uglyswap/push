@@ -198,7 +198,7 @@ func (t *WebFetchTool) Execute(ctx context.Context, params json.RawMessage) (str
 	}
 
 	// Set user agent
-	req.Header.Set("User-Agent", "Crush/1.0 (AI Assistant; +https://github.com/uglyswap/crush)")
+	req.Header.Set("User-Agent", "Crush/1.0 (AI Assistant; +https://github.com/uglyswap/push)")
 	req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
 
 	resp, err := t.httpClient.Do(req)

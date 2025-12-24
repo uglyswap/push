@@ -9,11 +9,11 @@ import (
 	"os"
 	"time"
 
-	"github.com/uglyswap/crush/pkg/fantasy"
+	"github.com/uglyswap/push/pkg/fantasy"
 
-	"github.com/uglyswap/crush/internal/agent/prompt"
-	"github.com/uglyswap/crush/internal/agent/tools"
-	"github.com/uglyswap/crush/internal/permission"
+	"github.com/uglyswap/push/internal/agent/prompt"
+	"github.com/uglyswap/push/internal/agent/tools"
+	"github.com/uglyswap/push/internal/permission"
 )
 
 //go:embed templates/agentic_fetch.md

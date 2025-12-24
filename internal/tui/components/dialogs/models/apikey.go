@@ -5,13 +5,13 @@ import (
 
 	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/charmbracelet/bubbles/textinput"
-	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
+	tea "github.com/uglyswap/push/internal/compat/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/uglyswap/crush/internal/config"
-	compat_textinput "github.com/uglyswap/crush/internal/compat/bubbles/textinput"
-	"github.com/uglyswap/crush/internal/home"
-	"github.com/uglyswap/crush/internal/tui/styles"
-	"github.com/uglyswap/crush/internal/tui/util"
+	"github.com/uglyswap/push/internal/config"
+	compat_textinput "github.com/uglyswap/push/internal/compat/bubbles/textinput"
+	"github.com/uglyswap/push/internal/home"
+	"github.com/uglyswap/push/internal/tui/styles"
+	"github.com/uglyswap/push/internal/tui/util"
 )
 
 type APIKeyInputState int

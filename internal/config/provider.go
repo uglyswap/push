@@ -15,12 +15,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/uglyswap/crush/internal/catwalk"
-	"github.com/uglyswap/crush/internal/catwalk/embedded"
-	"github.com/uglyswap/crush/internal/catwalk/remote"
-	"github.com/uglyswap/crush/internal/agent/hyper"
-	"github.com/uglyswap/crush/internal/csync"
-	"github.com/uglyswap/crush/internal/home"
+	"github.com/uglyswap/push/internal/catwalk"
+	"github.com/uglyswap/push/internal/catwalk/embedded"
+	"github.com/uglyswap/push/internal/catwalk/remote"
+	"github.com/uglyswap/push/internal/agent/hyper"
+	"github.com/uglyswap/push/internal/csync"
+	"github.com/uglyswap/push/internal/home"
 	"github.com/charmbracelet/x/etag"
 )
 

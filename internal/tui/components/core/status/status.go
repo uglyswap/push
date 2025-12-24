@@ -4,10 +4,10 @@ import (
 	"time"
 
 	"github.com/charmbracelet/bubbles/help"
-	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
+	tea "github.com/uglyswap/push/internal/compat/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/uglyswap/crush/internal/tui/styles"
-	"github.com/uglyswap/crush/internal/tui/util"
+	"github.com/uglyswap/push/internal/tui/styles"
+	"github.com/uglyswap/push/internal/tui/util"
 	"github.com/charmbracelet/x/ansi"
 )
 

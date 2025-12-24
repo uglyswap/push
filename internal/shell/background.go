@@ -8,7 +8,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/uglyswap/crush/internal/csync"
+	"github.com/uglyswap/push/internal/csync"
 )
 
 const (

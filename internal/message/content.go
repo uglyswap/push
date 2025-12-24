@@ -8,11 +8,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/uglyswap/crush/internal/catwalk"
-	"github.com/uglyswap/crush/pkg/fantasy"
-	"github.com/uglyswap/crush/pkg/fantasy/providers/anthropic"
-	"github.com/uglyswap/crush/pkg/fantasy/providers/google"
-	"github.com/uglyswap/crush/pkg/fantasy/providers/openai"
+	"github.com/uglyswap/push/internal/catwalk"
+	"github.com/uglyswap/push/pkg/fantasy"
+	"github.com/uglyswap/push/pkg/fantasy/providers/anthropic"
+	"github.com/uglyswap/push/pkg/fantasy/providers/google"
+	"github.com/uglyswap/push/pkg/fantasy/providers/openai"
 )
 
 type MessageRole string

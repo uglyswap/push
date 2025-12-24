@@ -8,7 +8,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/textarea"
 	"github.com/charmbracelet/lipgloss"
-	compat_tea "github.com/uglyswap/crush/internal/compat/bubbletea"
+	compat_tea "github.com/uglyswap/push/internal/compat/bubbletea"
 )
 
 // Re-export core types

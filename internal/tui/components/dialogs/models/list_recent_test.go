@@ -8,11 +8,11 @@ import (
 	"strings"
 	"testing"
 
-	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
-	"github.com/uglyswap/crush/internal/catwalk"
-	"github.com/uglyswap/crush/internal/config"
-	"github.com/uglyswap/crush/internal/log"
-	"github.com/uglyswap/crush/internal/tui/exp/list"
+	tea "github.com/uglyswap/push/internal/compat/bubbletea"
+	"github.com/uglyswap/push/internal/catwalk"
+	"github.com/uglyswap/push/internal/config"
+	"github.com/uglyswap/push/internal/log"
+	"github.com/uglyswap/push/internal/tui/exp/list"
 	"github.com/stretchr/testify/require"
 )
 

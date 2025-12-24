@@ -6,11 +6,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/uglyswap/crush/pkg/fantasy"
+	"github.com/uglyswap/push/pkg/fantasy"
 
-	"github.com/uglyswap/crush/internal/agent/prompt"
-	"github.com/uglyswap/crush/internal/agent/tools"
-	"github.com/uglyswap/crush/internal/config"
+	"github.com/uglyswap/push/internal/agent/prompt"
+	"github.com/uglyswap/push/internal/agent/tools"
+	"github.com/uglyswap/push/internal/config"
 )
 
 //go:embed templates/agent_tool.md

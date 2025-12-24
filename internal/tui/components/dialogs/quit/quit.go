@@ -2,11 +2,11 @@ package quit
 
 import (
 	"github.com/charmbracelet/bubbles/key"
-	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
+	tea "github.com/uglyswap/push/internal/compat/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/uglyswap/crush/internal/tui/components/dialogs"
-	"github.com/uglyswap/crush/internal/tui/styles"
-	"github.com/uglyswap/crush/internal/tui/util"
+	"github.com/uglyswap/push/internal/tui/components/dialogs"
+	"github.com/uglyswap/push/internal/tui/styles"
+	"github.com/uglyswap/push/internal/tui/util"
 )
 
 const (
