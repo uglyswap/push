@@ -321,7 +321,10 @@ func (c *Config) configureProviders(env env.Env, resolver VariableResolver, know
 func (c *Config) setDefaults(workingDir, dataDir string) {
 	c.workingDir = workingDir
 	if c.Options == nil {
-		c.Options = &Options{}
+		c.Options = &Options{
+			// Disable provider auto-update by default - we use embedded providers
+			DisableProviderAutoUpdate: true,
+		}
 	}
 	if c.Options.TUI == nil {
 		c.Options.TUI = &TUIOptions{}
@@ -362,8 +365,13 @@ func (c *Config) setDefaults(workingDir, dataDir string) {
 	slices.Sort(c.Options.ContextPaths)
 	c.Options.ContextPaths = slices.Compact(c.Options.ContextPaths)
 
+	// Provider auto-update is disabled by default - we use embedded providers
+	// Users can enable it by setting CRUSH_DISABLE_PROVIDER_AUTO_UPDATE=false
 	if str, ok := os.LookupEnv("CRUSH_DISABLE_PROVIDER_AUTO_UPDATE"); ok {
 		c.Options.DisableProviderAutoUpdate, _ = strconv.ParseBool(str)
+	} else {
+		// Default to true (disabled) when not explicitly set
+		c.Options.DisableProviderAutoUpdate = true
 	}
 
 	if c.Options.Attribution == nil {

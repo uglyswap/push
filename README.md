@@ -197,6 +197,15 @@ export ANTHROPIC_API_KEY="your-api-key"
 export OPENAI_API_KEY="your-api-key"
 ```
 
+### Providers
+
+Crush uses embedded AI provider configurations out of the box. No external network connection is required for provider setup - just set your API key and you're ready to go.
+
+Supported providers:
+- **Anthropic** (Claude models) - Recommended
+- **OpenAI** (GPT models)
+- **Custom** providers via configuration
+
 ---
 
 ## 🧠 Extended Thinking
