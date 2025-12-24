@@ -24,7 +24,7 @@ type Opts struct {
 	FieldColor   color.Color // diagonal lines
 	TitleColorA  color.Color // left gradient ramp point
 	TitleColorB  color.Color // right gradient ramp point
-	CharmColor   color.Color // Charm™ text color
+	PushColor   color.Color // Push text color
 	VersionColor color.Color // Version text color
 	Width        int         // width of the rendered logo, used for truncation
 }
@@ -35,7 +35,7 @@ type Opts struct {
 // The compact argument determines whether it renders compact for the sidebar
 // or wider for the main pane.
 func Render(version string, compact bool, o Opts) string {
-	const charm = " Charm™"
+	const brand = " Push"
 
 	fg := func(c color.Color, s string) string {
 		return lipgloss.NewStyle().Foreground(styles.TC(c)).Render(s)
@@ -44,8 +44,7 @@ func Render(version string, compact bool, o Opts) string {
 	// Title.
 	const spacing = 1
 	letterforms := []letterform{
-		letterC,
-		letterR,
+		letterP,
 		letterU,
 		letterSStylized,
 		letterH,
@@ -55,31 +54,31 @@ func Render(version string, compact bool, o Opts) string {
 		stretchIndex = cachedRandN(len(letterforms))
 	}
 
-	crush := renderWord(spacing, stretchIndex, letterforms...)
-	crushWidth := lipgloss.Width(crush)
+	push := renderWord(spacing, stretchIndex, letterforms...)
+	pushWidth := lipgloss.Width(push)
 	b := new(strings.Builder)
-	for r := range strings.SplitSeq(crush, "\n") {
+	for r := range strings.SplitSeq(push, "\n") {
 		fmt.Fprintln(b, styles.ApplyForegroundGrad(r, o.TitleColorA, o.TitleColorB))
 	}
-	crush = b.String()
+	push = b.String()
 
 	// Charm and version.
 	metaRowGap := 1
-	maxVersionWidth := crushWidth - lipgloss.Width(charm) - metaRowGap
+	maxVersionWidth := pushWidth - lipgloss.Width(brand) - metaRowGap
 	version = ansi.Truncate(version, maxVersionWidth, "…") // truncate version if too long.
-	gap := max(0, crushWidth-lipgloss.Width(charm)-lipgloss.Width(version))
-	metaRow := fg(o.CharmColor, charm) + strings.Repeat(" ", gap) + fg(o.VersionColor, version)
+	gap := max(0, pushWidth-lipgloss.Width(brand)-lipgloss.Width(version))
+	metaRow := fg(o.PushColor, brand) + strings.Repeat(" ", gap) + fg(o.VersionColor, version)
 
 	// Join the meta row and big Crush title.
-	crush = strings.TrimSpace(metaRow + "\n" + crush)
+	push = strings.TrimSpace(metaRow + "\n" + push)
 
 	// Narrow version.
 	if compact {
-		field := fg(o.FieldColor, strings.Repeat(diag, crushWidth))
-		return strings.Join([]string{field, field, crush, field, ""}, "\n")
+		field := fg(o.FieldColor, strings.Repeat(diag, pushWidth))
+		return strings.Join([]string{field, field, push, field, ""}, "\n")
 	}
 
-	fieldHeight := lipgloss.Height(crush)
+	fieldHeight := lipgloss.Height(push)
 
 	// Left field.
 	const leftWidth = 6
@@ -90,7 +89,7 @@ func Render(version string, compact bool, o Opts) string {
 	}
 
 	// Right field.
-	rightWidth := max(15, o.Width-crushWidth-leftWidth-2) // 2 for the gap.
+	rightWidth := max(15, o.Width-pushWidth-leftWidth-2) // 2 for the gap.
 	const stepDownAt = 0
 	rightField := new(strings.Builder)
 	for i := range fieldHeight {
@@ -103,7 +102,7 @@ func Render(version string, compact bool, o Opts) string {
 
 	// Return the wide version.
 	const hGap = " "
-	logo := lipgloss.JoinHorizontal(lipgloss.Top, leftField.String(), hGap, crush, hGap, rightField.String())
+	logo := lipgloss.JoinHorizontal(lipgloss.Top, leftField.String(), hGap, push, hGap, rightField.String())
 	if o.Width > 0 {
 		// Truncate the logo to the specified width.
 		lines := strings.Split(logo, "\n")
@@ -119,7 +118,7 @@ func Render(version string, compact bool, o Opts) string {
 // smaller windows or sidebar usage.
 func SmallRender(width int) string {
 	t := styles.CurrentTheme()
-	title := t.S().Base.Foreground(styles.TC(t.Secondary)).Render("Charm™")
+	title := t.S().Base.Foreground(styles.TC(t.Secondary)).Render("Push")
 	title = fmt.Sprintf("%s %s", title, styles.ApplyBoldForegroundGrad("Crush", t.Secondary, t.Primary))
 	remainingWidth := width - lipgloss.Width(title) - 1 // 1 for the space after "Crush"
 	if remainingWidth > 0 {
@@ -209,6 +208,41 @@ func letterH(stretch bool) string {
 			maxStretch: 12,
 		}),
 		side,
+	)
+}
+
+// letterP renders the letter P in a stylized way. It takes an integer that
+// determines how many cells to stretch the letter. If the stretch is less than
+// 1, it defaults to no stretching.
+func letterP(stretch bool) string {
+	// Here's what we're making:
+	//
+	// █▀▀▀▄
+	// █▀▀▀▀
+	// ▀
+
+	left := heredoc.Doc(`
+		█
+		█
+		▀
+	`)
+	center := heredoc.Doc(`
+		▀
+		▀
+	`)
+	right := heredoc.Doc(`
+		▄
+
+	`)
+	return joinLetterform(
+		left,
+		stretchLetterformPart(center, letterformProps{
+			stretch:    stretch,
+			width:      3,
+			minStretch: 7,
+			maxStretch: 12,
+		}),
+		right,
 	)
 }
 
