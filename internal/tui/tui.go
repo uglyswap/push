@@ -3,6 +3,7 @@ package tui
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/charmbracelet/bubbles/key"
@@ -581,13 +582,14 @@ func (a *appModel) View() string {
 	result := appView
 
 	if a.dialog.HasDialogs() {
-		// Overlay the dialog on top of the app view
-		dialogView := a.dialog.View()
-		result = lipgloss.Place(a.wWidth, a.wHeight, lipgloss.Center, lipgloss.Center,
-			dialogView,
-			lipgloss.WithWhitespaceChars(" "),
-			lipgloss.WithWhitespaceForeground(styles.TC(t.BgBase)),
-		)
+		// Overlay the active dialog on top of the app view
+		activeDialog := a.dialog.ActiveModel()
+		if activeDialog != nil {
+			dialogView := activeDialog.View()
+			row, col := activeDialog.(dialogs.DialogModel).Position()
+			// Place the dialog at its specified position
+			result = placeOverlay(result, dialogView, col, row, a.wWidth, a.wHeight)
+		}
 	}
 
 	if a.completions.Open() {
@@ -605,6 +607,92 @@ func (a *appModel) View() string {
 	}
 
 	return result
+}
+
+// placeOverlay places an overlay on top of a background at the specified position.
+func placeOverlay(background, overlay string, x, y, width, height int) string {
+	// Handle negative positions by clamping to 0
+	if x < 0 {
+		x = 0
+	}
+	if y < 0 {
+		y = 0
+	}
+
+	bgLines := strings.Split(background, "\n")
+	overlayLines := strings.Split(overlay, "\n")
+
+	// Ensure background has enough lines
+	for len(bgLines) < height {
+		bgLines = append(bgLines, strings.Repeat(" ", width))
+	}
+
+	// Overlay each line
+	for i, overlayLine := range overlayLines {
+		bgY := y + i
+		if bgY >= 0 && bgY < len(bgLines) {
+			bgLine := bgLines[bgY]
+			overlayWidth := lipgloss.Width(overlayLine)
+
+			// Build the new line: prefix + overlay + suffix
+			prefix := ""
+			if x > 0 {
+				prefixWidth := min(x, lipgloss.Width(bgLine))
+				// Get visible prefix from background
+				prefix = truncateWithWidth(bgLine, prefixWidth)
+				// Pad if needed
+				for lipgloss.Width(prefix) < x {
+					prefix += " "
+				}
+			}
+
+			suffix := ""
+			suffixStart := x + overlayWidth
+			if suffixStart < lipgloss.Width(bgLine) {
+				suffix = cutLeft(bgLine, suffixStart)
+			}
+
+			bgLines[bgY] = prefix + overlayLine + suffix
+		}
+	}
+
+	return strings.Join(bgLines, "\n")
+}
+
+// truncateWithWidth truncates a string to the specified visible width.
+func truncateWithWidth(s string, maxWidth int) string {
+	if lipgloss.Width(s) <= maxWidth {
+		return s
+	}
+	// Simple truncation - for ANSI strings this is approximate
+	runes := []rune(s)
+	for i := len(runes); i > 0; i-- {
+		candidate := string(runes[:i])
+		if lipgloss.Width(candidate) <= maxWidth {
+			return candidate
+		}
+	}
+	return ""
+}
+
+// cutLeft removes the first n visible characters from a string.
+func cutLeft(s string, n int) string {
+	if n <= 0 {
+		return s
+	}
+	if n >= lipgloss.Width(s) {
+		return ""
+	}
+	// Skip n visible characters
+	runes := []rune(s)
+	width := 0
+	for i, r := range runes {
+		width += lipgloss.Width(string(r))
+		if width >= n {
+			return string(runes[i+1:])
+		}
+	}
+	return ""
 }
 
 func (a *appModel) handleStateChanged(ctx context.Context) tea.Cmd {
