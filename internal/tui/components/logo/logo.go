@@ -57,7 +57,7 @@ func Render(version string, compact bool, o Opts) string {
 	push := renderWord(spacing, stretchIndex, letterforms...)
 	pushWidth := lipgloss.Width(push)
 	b := new(strings.Builder)
-	for r := range strings.SplitSeq(crush, "\n") {
+	for r := range strings.SplitSeq(push, "\n") {
 		fmt.Fprintln(b, styles.ApplyForegroundGrad(r, o.TitleColorA, o.TitleColorB))
 	}
 	push = b.String()
@@ -70,12 +70,12 @@ func Render(version string, compact bool, o Opts) string {
 	metaRow := fg(o.CharmColor, charm) + strings.Repeat(" ", gap) + fg(o.VersionColor, version)
 
 	// Join the meta row and big Push title.
-	crush = strings.TrimSpace(metaRow + "\n" + crush)
+	push = strings.TrimSpace(metaRow + "\n" + push)
 
 	// Narrow version.
 	if compact {
 		field := fg(o.FieldColor, strings.Repeat(diag, pushWidth))
-		return strings.Join([]string{field, field, crush, field, ""}, "\n")
+		return strings.Join([]string{field, field, push, field, ""}, "\n")
 	}
 
 	fieldHeight := lipgloss.Height(push)
