@@ -196,6 +196,7 @@ func Providers(cfg *Config) ([]catwalk.Provider, error) {
 func fetchDynamicModels(ctx context.Context, cfg *Config, providers []catwalk.Provider) []catwalk.Provider {
 	// Skip if dynamic fetch is disabled
 	if cfg.Options.DisableDynamicModelFetch {
+		slog.Debug("Dynamic model fetch is disabled")
 		return providers
 	}
 
@@ -203,7 +204,13 @@ func fetchDynamicModels(ctx context.Context, cfg *Config, providers []catwalk.Pr
 
 	// Collect API keys from config
 	apiKeys := make(map[catwalk.InferenceProvider]string)
+	if cfg.Providers == nil {
+		slog.Debug("cfg.Providers is nil, skipping dynamic fetch")
+		return providers
+	}
+	slog.Debug("Checking providers for API keys", "count", cfg.Providers.Len())
 	for providerID, providerCfg := range cfg.Providers.Seq2() {
+		slog.Debug("Checking provider", "id", providerID, "hasKey", providerCfg.APIKey != "")
 		if providerCfg.APIKey != "" {
 			// Resolve environment variable if starts with $
 			resolvedKey := providerCfg.APIKey
@@ -212,14 +219,18 @@ func fetchDynamicModels(ctx context.Context, cfg *Config, providers []catwalk.Pr
 			}
 			if resolvedKey != "" {
 				apiKeys[catwalk.InferenceProvider(providerID)] = resolvedKey
+				slog.Debug("Found API key for provider", "provider", providerID)
 			}
 		}
 	}
 
 	// No API keys configured, return original providers
 	if len(apiKeys) == 0 {
+		slog.Debug("No API keys configured, skipping dynamic fetch")
 		return providers
 	}
+
+	slog.Info("Starting dynamic model fetch", "providers_with_keys", len(apiKeys))
 
 	// Fetch models for each provider with an API key
 	for i := range providers {
@@ -228,15 +239,18 @@ func fetchDynamicModels(ctx context.Context, cfg *Config, providers []catwalk.Pr
 			continue
 		}
 
+		slog.Info("Fetching models from API", "provider", providers[i].ID)
 		models, err := fetcher.FetchModels(ctx, providers[i].ID, apiKey)
 		if err != nil {
-			slog.Debug("Failed to fetch dynamic models", "provider", providers[i].ID, "error", err)
+			slog.Warn("Failed to fetch dynamic models", "provider", providers[i].ID, "error", err)
 			continue
 		}
 
 		if len(models) > 0 {
 			slog.Info("Fetched dynamic models", "provider", providers[i].ID, "count", len(models))
 			providers[i].Models = models
+		} else {
+			slog.Warn("No models returned from API", "provider", providers[i].ID)
 		}
 	}
 
