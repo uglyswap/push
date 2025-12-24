@@ -3,7 +3,7 @@ package sessions
 import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/uglyswap/crush/internal/event"
 	"github.com/uglyswap/crush/internal/session"
@@ -13,6 +13,7 @@ import (
 	"github.com/uglyswap/crush/internal/tui/exp/list"
 	"github.com/uglyswap/crush/internal/tui/styles"
 	"github.com/uglyswap/crush/internal/tui/util"
+	"github.com/uglyswap/crush/internal/uiutil"
 )
 
 const SessionsDialogID dialogs.DialogID = "sessions"
@@ -133,15 +134,16 @@ func (s *sessionDialogCmp) View() string {
 	return s.style().Render(content)
 }
 
-func (s *sessionDialogCmp) Cursor() *tea.Cursor {
-	if cursor, ok := s.sessionsList.(util.Cursor); ok {
-		cursor := cursor.Cursor()
-		if cursor != nil {
-			cursor = s.moveCursor(cursor)
-		}
-		return cursor
+func (s *sessionDialogCmp) Cursor() *uiutil.CursorPosition {
+	listCursor := s.sessionsList.Cursor()
+	if listCursor == nil {
+		return nil
 	}
-	return nil
+	cursor := &uiutil.CursorPosition{
+		X: listCursor.X,
+		Y: listCursor.Y,
+	}
+	return s.moveCursor(cursor)
 }
 
 func (s *sessionDialogCmp) style() lipgloss.Style {
@@ -149,7 +151,7 @@ func (s *sessionDialogCmp) style() lipgloss.Style {
 	return t.S().Base.
 		Width(s.width).
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(t.BorderFocus)
+		BorderForeground(styles.TC(t.BorderFocus))
 }
 
 func (s *sessionDialogCmp) listHeight() int {
@@ -167,7 +169,7 @@ func (s *sessionDialogCmp) Position() (int, int) {
 	return row, col
 }
 
-func (s *sessionDialogCmp) moveCursor(cursor *tea.Cursor) *tea.Cursor {
+func (s *sessionDialogCmp) moveCursor(cursor *uiutil.CursorPosition) *uiutil.CursorPosition {
 	row, col := s.Position()
 	offset := row + 3 // Border + title
 	cursor.Y += offset

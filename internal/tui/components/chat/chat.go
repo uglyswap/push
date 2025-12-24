@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/charmbracelet/bubbles/key"
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 	"github.com/atotto/clipboard"
 	"github.com/uglyswap/crush/internal/agent"
 	"github.com/uglyswap/crush/internal/agent/tools"
@@ -103,7 +103,7 @@ func (m *messageListCmp) Init() tea.Cmd {
 func (m *messageListCmp) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 	var cmds []tea.Cmd
 	switch msg := msg.(type) {
-	case tea.KeyPressMsg:
+	case tea.KeyMsg:
 		if m.listCmp.IsFocused() && m.listCmp.HasSelection() {
 			switch {
 			case key.Matches(msg, messages.CopyKey):
@@ -114,39 +114,35 @@ func (m *messageListCmp) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 				return m, tea.Batch(cmds...)
 			}
 		}
-	case tea.MouseClickMsg:
+	case tea.MouseMsg:
 		x := msg.X - 1 // Adjust for padding
 		y := msg.Y - 1 // Adjust for padding
-		if x < 0 || y < 0 || x >= m.width-2 || y >= m.height-1 {
-			return m, nil // Ignore clicks outside the component
-		}
-		if msg.Button == tea.MouseLeft {
+		switch msg.Type {
+		case tea.MouseLeft:
+			// Mouse click
+			if x < 0 || y < 0 || x >= m.width-2 || y >= m.height-1 {
+				return m, nil // Ignore clicks outside the component
+			}
 			cmds = append(cmds, m.handleMouseClick(x, y))
 			return m, tea.Batch(cmds...)
-		}
-		return m, tea.Batch(cmds...)
-	case tea.MouseMotionMsg:
-		x := msg.X - 1 // Adjust for padding
-		y := msg.Y - 1 // Adjust for padding
-		if x < 0 || y < 0 || x >= m.width-2 || y >= m.height-1 {
-			if y < 0 {
-				cmds = append(cmds, m.listCmp.MoveUp(1))
-				return m, tea.Batch(cmds...)
+		case tea.MouseMotion:
+			// Mouse motion
+			if x < 0 || y < 0 || x >= m.width-2 || y >= m.height-1 {
+				if y < 0 {
+					cmds = append(cmds, m.listCmp.MoveUp(1))
+					return m, tea.Batch(cmds...)
+				}
+				if y >= m.height-1 {
+					cmds = append(cmds, m.listCmp.MoveDown(1))
+					return m, tea.Batch(cmds...)
+				}
+				return m, nil // Ignore motion outside the component
 			}
-			if y >= m.height-1 {
-				cmds = append(cmds, m.listCmp.MoveDown(1))
-				return m, tea.Batch(cmds...)
-			}
-			return m, nil // Ignore clicks outside the component
-		}
-		if msg.Button == tea.MouseLeft {
+			// In v1, we track motion during selection
 			m.listCmp.EndSelection(x, y)
-		}
-		return m, tea.Batch(cmds...)
-	case tea.MouseReleaseMsg:
-		x := msg.X - 1 // Adjust for padding
-		y := msg.Y - 1 // Adjust for padding
-		if msg.Button == tea.MouseLeft {
+			return m, tea.Batch(cmds...)
+		case tea.MouseRelease:
+			// Mouse release
 			clickCount := m.clickCount
 			if x < 0 || y < 0 || x >= m.width-2 || y >= m.height-1 {
 				tick := tea.Tick(doubleClickThreshold, func(time.Time) tea.Msg {
@@ -155,7 +151,6 @@ func (m *messageListCmp) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 						endSelection: false,
 					}
 				})
-
 				cmds = append(cmds, tick)
 				return m, tea.Batch(cmds...)
 			}
@@ -168,6 +163,12 @@ func (m *messageListCmp) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 				}
 			})
 			cmds = append(cmds, tick)
+			return m, tea.Batch(cmds...)
+		case tea.MouseWheelUp, tea.MouseWheelDown:
+			// Mouse wheel - delegate to list
+			u, cmd := m.listCmp.Update(msg)
+			m.listCmp = u.(list.List[list.Item])
+			cmds = append(cmds, cmd)
 			return m, tea.Batch(cmds...)
 		}
 		return m, nil
@@ -196,12 +197,6 @@ func (m *messageListCmp) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 
 	case pubsub.Event[message.Message]:
 		cmds = append(cmds, m.handleMessageEvent(msg))
-		return m, tea.Batch(cmds...)
-
-	case tea.MouseWheelMsg:
-		u, cmd := m.listCmp.Update(msg)
-		m.listCmp = u.(list.List[list.Item])
-		cmds = append(cmds, cmd)
 		return m, tea.Batch(cmds...)
 	}
 
@@ -757,9 +752,7 @@ func (m *messageListCmp) CopySelectedText(clear bool) tea.Cmd {
 	}
 
 	cmds := []tea.Cmd{
-		// We use both OSC 52 and native clipboard for compatibility with different
-		// terminal emulators and environments.
-		tea.SetClipboard(selectedText),
+		// Use native clipboard for compatibility with different environments.
 		func() tea.Msg {
 			_ = clipboard.WriteAll(selectedText)
 			return nil

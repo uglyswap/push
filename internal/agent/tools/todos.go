@@ -18,11 +18,6 @@ type TodosParams struct {
 	Todos []TodoItem `json:"todos" description:"The updated todo list"`
 }
 
-type TodoItem struct {
-	Content    string `json:"content" description:"What needs to be done (imperative form)"`
-	Status     string `json:"status" description:"Task status: pending, in_progress, or completed"`
-	ActiveForm string `json:"active_form" description:"Present continuous form (e.g., 'Running tests')"`
-}
 
 type TodosResponseMetadata struct {
 	IsNew         bool           `json:"is_new"`

@@ -6,9 +6,9 @@ import (
 	"log/slog"
 	"testing"
 
-	"github.com/charmbracelet/catwalk/pkg/catwalk"
-	"github.com/charmbracelet/crush/internal/oauth"
-	"github.com/charmbracelet/crush/internal/oauth/copilot"
+	"github.com/uglyswap/crush/internal/catwalk"
+	"github.com/uglyswap/crush/internal/oauth"
+	"github.com/uglyswap/crush/internal/oauth/copilot"
 )
 
 func (c *Config) ImportCopilot() (*oauth.Token, bool) {

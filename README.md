@@ -97,8 +97,26 @@ Crush is a next-generation AI CLI tool that combines the power of large language
 git clone https://github.com/uglyswap/crush.git
 cd crush
 
-# Build
-go build -o crush ./cmd/crush
+# Download dependencies
+go mod download
+
+# Build and install
+go install .
+
+# The binary will be installed to $GOPATH/bin/crush (or $HOME/go/bin/crush)
+# Make sure this directory is in your PATH
+```
+
+### Alternative: Build Locally
+
+```bash
+# Clone the repository
+git clone https://github.com/uglyswap/crush.git
+cd crush
+
+# Download dependencies and build
+go mod download
+go build -o crush .
 
 # Install globally (Linux/macOS)
 sudo mv crush /usr/local/bin/
@@ -107,15 +125,13 @@ sudo mv crush /usr/local/bin/
 # Move crush.exe to a directory in your PATH
 ```
 
-### Using Go Install
-
-```bash
-go install github.com/uglyswap/crush/cmd/crush@latest
-```
-
 ### From Releases
 
 Download pre-built binaries from the [Releases](https://github.com/uglyswap/crush/releases) page.
+
+### Compatibility Notes
+
+This version uses a compatibility layer (`internal/compat/`) to work with bubbletea v1 and lipgloss v1. The codebase has been adapted from charm v2 libraries to ensure compatibility with the current stable releases of the Charm ecosystem.
 
 ---
 
@@ -519,7 +535,7 @@ go mod download
 go test ./...
 
 # Build
-go build -o crush ./cmd/crush
+go build -o crush .
 
 # Run locally
 ./crush

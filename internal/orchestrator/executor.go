@@ -205,7 +205,7 @@ func (e *Executor) buildSystemPrompt(agent *Agent, agentCtx *AgentContext) strin
 
 	// Add trust level context
 	if agentCtx.TrustLevel.Level > 0 {
-		sb.WriteString(fmt.Sprintf("## Trust Level\nCurrent trust level: %s\n", agentCtx.TrustLevel.Name()))
+		sb.WriteString(fmt.Sprintf("## Trust Level\nCurrent trust level: %s\n", agentCtx.TrustLevel.Name))
 		if agentCtx.TrustLevel.Level <= TrustLevelSupervised {
 			sb.WriteString("⚠️ Operating under supervision - all changes require verification.\n")
 		}
@@ -497,49 +497,6 @@ func GetThinkingLevelForTask(task *Task, keywords []string) ThinkingLevel {
 	return ThinkingLevelThinkHard
 }
 
-// AgentScore represents the quality score for an agent execution.
-type AgentScore struct {
-	Completeness     float64 // 30% - All requested elements completed
-	Precision        float64 // 30% - Code correctness
-	Coherence        float64 // 25% - Integration with existing code
-	ContextRetention float64 // 15% - Project conventions followed
-}
-
-// Total returns the weighted total score.
-func (s AgentScore) Total() float64 {
-	return s.Completeness*0.30 +
-		s.Precision*0.30 +
-		s.Coherence*0.25 +
-		s.ContextRetention*0.15
-}
-
-// Grade returns a letter grade based on total score.
-func (s AgentScore) Grade() string {
-	total := s.Total()
-	switch {
-	case total >= 0.90:
-		return "A"
-	case total >= 0.80:
-		return "B"
-	case total >= 0.70:
-		return "C"
-	case total >= 0.60:
-		return "D"
-	default:
-		return "F"
-	}
-}
-
-// String returns a formatted score string.
-func (s AgentScore) String() string {
-	return fmt.Sprintf("%.0f%% (%s) [C:%.0f%% P:%.0f%% Co:%.0f%% R:%.0f%%]",
-		s.Total()*100,
-		s.Grade(),
-		s.Completeness*100,
-		s.Precision*100,
-		s.Coherence*100,
-		s.ContextRetention*100)
-}
 
 // parseYAMLInt extracts an integer value from YAML.
 func (e *Executor) parseYAMLInt(yaml, key string) int {

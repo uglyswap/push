@@ -12,17 +12,17 @@ import (
 	"strconv"
 	"strings"
 
-	tea "charm.land/bubbletea/v2"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/colorprofile"
-	"github.com/charmbracelet/crush/internal/app"
-	"github.com/charmbracelet/crush/internal/config"
-	"github.com/charmbracelet/crush/internal/db"
-	"github.com/charmbracelet/crush/internal/event"
-	"github.com/charmbracelet/crush/internal/projects"
-	"github.com/charmbracelet/crush/internal/stringext"
-	"github.com/charmbracelet/crush/internal/tui"
-	"github.com/charmbracelet/crush/internal/version"
+	"github.com/uglyswap/crush/internal/app"
+	"github.com/uglyswap/crush/internal/config"
+	"github.com/uglyswap/crush/internal/db"
+	"github.com/uglyswap/crush/internal/event"
+	"github.com/uglyswap/crush/internal/projects"
+	"github.com/uglyswap/crush/internal/stringext"
+	"github.com/uglyswap/crush/internal/tui"
+	"github.com/uglyswap/crush/internal/version"
 	"github.com/charmbracelet/fang"
 	uv "github.com/charmbracelet/ultraviolet"
 	"github.com/charmbracelet/x/ansi"
@@ -91,17 +91,19 @@ crush -y
 		ui := tui.New(app)
 		ui.QueryVersion = shouldQueryTerminalVersion(env)
 
+		// Note: In bubbletea v1, WithEnvironment and WithFilter are not available
+		// Environment is automatically inherited, and mouse event filtering is handled in Update
 		program := tea.NewProgram(
 			ui,
-			tea.WithEnvironment(env),
-			tea.WithContext(cmd.Context()),
-			tea.WithFilter(tui.MouseEventFilter)) // Filter mouse events based on focus state
+			tea.WithAltScreen(),
+			tea.WithMouseCellMotion(),
+			tea.WithContext(cmd.Context()))
 		go app.Subscribe(program)
 
 		if _, err := program.Run(); err != nil {
 			event.Error(err)
 			slog.Error("TUI run error", "error", err)
-			return errors.New("Crush crashed. If metrics are enabled, we were notified about it. If you'd like to report it, please copy the stacktrace above and open an issue at https://github.com/charmbracelet/crush/issues/new?template=bug.yml") //nolint:staticcheck
+			return errors.New("Crush crashed. If metrics are enabled, we were notified about it. If you'd like to report it, please copy the stacktrace above and open an issue at https://github.com/uglyswap/crush/issues/new?template=bug.yml") //nolint:staticcheck
 		}
 		return nil
 	},

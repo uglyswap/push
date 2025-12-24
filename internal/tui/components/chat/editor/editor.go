@@ -15,7 +15,8 @@ import (
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textarea"
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
+	compattextarea "github.com/uglyswap/crush/internal/compat/bubbles/textarea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/uglyswap/crush/internal/app"
 	"github.com/uglyswap/crush/internal/fsext"
@@ -30,6 +31,7 @@ import (
 	"github.com/uglyswap/crush/internal/tui/components/dialogs/quit"
 	"github.com/uglyswap/crush/internal/tui/styles"
 	"github.com/uglyswap/crush/internal/tui/util"
+	"github.com/uglyswap/crush/internal/uiutil"
 	"github.com/charmbracelet/x/ansi"
 )
 
@@ -44,7 +46,7 @@ type Editor interface {
 	IsCompletionsOpen() bool
 	HasAttachments() bool
 	IsEmpty() bool
-	Cursor() *tea.Cursor
+	Cursor() *uiutil.CursorPosition
 }
 
 type FileCompletionItem struct {
@@ -188,7 +190,7 @@ func (m *editorCmp) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 			return m, nil
 		}
 		if item, ok := msg.Value.(FileCompletionItem); ok {
-			word := m.textarea.Word()
+			word := compattextarea.GetWord(&m.textarea)
 			// If the selected item is a file, insert its path into the textarea
 			value := m.textarea.Value()
 			value = value[:m.completionsStartIndex] + // Remove the current query
@@ -196,7 +198,7 @@ func (m *editorCmp) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 				value[m.completionsStartIndex+len(word):] // Append the rest of the value
 			// XXX: This will always move the cursor to the end of the textarea.
 			m.textarea.SetValue(value)
-			m.textarea.MoveToEnd()
+			compattextarea.MoveToEnd(&m.textarea)
 			if !msg.Insert {
 				m.isCompletionsOpen = false
 				m.currentQuery = ""
@@ -222,7 +224,7 @@ func (m *editorCmp) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 		return m, m.openEditor(m.textarea.Value())
 	case OpenEditorMsg:
 		m.textarea.SetValue(msg.Text)
-		m.textarea.MoveToEnd()
+		compattextarea.MoveToEnd(&m.textarea)
 	case tea.PasteMsg:
 		content, path, err := pasteToFile(msg)
 		if errors.Is(err, errNotAFile) {
@@ -255,8 +257,11 @@ func (m *editorCmp) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 		m.setEditorPrompt()
 		return m, nil
 	case tea.KeyPressMsg:
-		cur := m.textarea.Cursor()
-		curIdx := m.textarea.Width()*cur.Y + cur.X
+		cur := compattextarea.GetCursorPosition(&m.textarea)
+		curIdx := 0
+		if cur != nil {
+			curIdx = m.textarea.Width()*cur.Y + cur.X
+		}
 		switch {
 		// Open command palette when "/" is pressed on empty prompt
 		case msg.String() == "/" && m.IsEmpty():
@@ -283,9 +288,13 @@ func (m *editorCmp) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 			m.attachments = nil
 			return m, nil
 		}
-		rune := msg.Code
-		if m.deleteMode && unicode.IsDigit(rune) {
-			num := int(rune - '0')
+		// Get the first rune from the key message (v1 uses Runes instead of Code)
+		var r rune
+		if len(msg.Runes) > 0 {
+			r = msg.Runes[0]
+		}
+		if m.deleteMode && unicode.IsDigit(r) {
+			num := int(r - '0')
 			m.deleteMode = false
 			if num < 10 && len(m.attachments) > num {
 				if num == 0 {
@@ -335,7 +344,7 @@ func (m *editorCmp) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 				m.completionsStartIndex = 0
 				cmds = append(cmds, util.CmdHandler(completions.CloseCompletionsMsg{}))
 			} else {
-				word := m.textarea.Word()
+				word := compattextarea.GetWord(&m.textarea)
 				if strings.HasPrefix(word, "@") {
 					// XXX: wont' work if editing in the middle of the field.
 					m.completionsStartIndex = strings.LastIndex(m.textarea.Value(), word)
@@ -366,14 +375,14 @@ func (m *editorCmp) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 
 func (m *editorCmp) setEditorPrompt() {
 	if m.app.Permissions.SkipRequests() {
-		m.textarea.SetPromptFunc(4, yoloPromptFunc)
+		compattextarea.SetPromptFuncCompat(&m.textarea, 4, yoloPromptFunc)
 		return
 	}
-	m.textarea.SetPromptFunc(4, normalPromptFunc)
+	compattextarea.SetPromptFuncCompat(&m.textarea, 4, normalPromptFunc)
 }
 
 func (m *editorCmp) completionsPosition() (int, int) {
-	cur := m.textarea.Cursor()
+	cur := compattextarea.GetCursorPosition(&m.textarea)
 	if cur == nil {
 		return m.x, m.y + 1 // adjust for padding
 	}
@@ -382,13 +391,15 @@ func (m *editorCmp) completionsPosition() (int, int) {
 	return x, y
 }
 
-func (m *editorCmp) Cursor() *tea.Cursor {
-	cursor := m.textarea.Cursor()
-	if cursor != nil {
-		cursor.X = cursor.X + m.x + 1
-		cursor.Y = cursor.Y + m.y + 1 // adjust for padding
+func (m *editorCmp) Cursor() *uiutil.CursorPosition {
+	cur := compattextarea.GetCursorPosition(&m.textarea)
+	if cur == nil {
+		return nil
 	}
-	return cursor
+	return &uiutil.CursorPosition{
+		X: cur.X + m.x + 1,
+		Y: cur.Y + m.y + 1, // adjust for padding
+	}
 }
 
 var readyPlaceholders = [...]string{
@@ -455,20 +466,20 @@ func (m *editorCmp) attachmentsContent() string {
 	attachmentStyle := t.S().Base.
 		Padding(0, 1).
 		MarginRight(1).
-		Background(t.FgMuted).
-		Foreground(t.FgBase).
+		Background(styles.TC(t.FgMuted)).
+		Foreground(styles.TC(t.FgBase)).
 		Render
 	iconStyle := t.S().Base.
-		Foreground(t.BgSubtle).
-		Background(t.Green).
+		Foreground(styles.TC(t.BgSubtle)).
+		Background(styles.TC(t.Green)).
 		Padding(0, 1).
 		Bold(true).
 		Render
 	rmStyle := t.S().Base.
 		Padding(0, 1).
 		Bold(true).
-		Background(t.Red).
-		Foreground(t.FgBase).
+		Background(styles.TC(t.Red)).
+		Foreground(styles.TC(t.FgBase)).
 		Render
 	for i, attachment := range m.attachments {
 		filename := ansi.Truncate(filepath.Base(attachment.FileName), 10, "...")
@@ -564,7 +575,7 @@ func (c *editorCmp) IsEmpty() bool {
 	return strings.TrimSpace(c.textarea.Value()) == ""
 }
 
-func normalPromptFunc(info textarea.PromptInfo) string {
+func normalPromptFunc(info compattextarea.PromptInfo) string {
 	t := styles.CurrentTheme()
 	if info.LineNumber == 0 {
 		if info.Focused {
@@ -573,12 +584,12 @@ func normalPromptFunc(info textarea.PromptInfo) string {
 		return "::: "
 	}
 	if info.Focused {
-		return t.S().Base.Foreground(t.GreenDark).Render("::: ")
+		return t.S().Base.Foreground(styles.TC(t.GreenDark)).Render("::: ")
 	}
 	return t.S().Muted.Render("::: ")
 }
 
-func yoloPromptFunc(info textarea.PromptInfo) string {
+func yoloPromptFunc(info compattextarea.PromptInfo) string {
 	t := styles.CurrentTheme()
 	if info.LineNumber == 0 {
 		if info.Focused {
@@ -596,10 +607,10 @@ func yoloPromptFunc(info textarea.PromptInfo) string {
 func New(app *app.App) Editor {
 	t := styles.CurrentTheme()
 	ta := textarea.New()
-	ta.SetStyles(t.S().TextArea)
+	compattextarea.SetStylesOnModel(&ta, t.S().TextArea)
 	ta.ShowLineNumbers = false
 	ta.CharLimit = -1
-	ta.SetVirtualCursor(false)
+	compattextarea.SetVirtualCursorCompat(&ta, false)
 	ta.Focus()
 	e := &editorCmp{
 		// TODO: remove the app instance from here
@@ -620,13 +631,15 @@ var maxAttachmentSize = 5 * 1024 * 1024 // 5MB
 var errNotAFile = errors.New("not a file")
 
 func pasteToFile(msg tea.PasteMsg) ([]byte, string, error) {
-	content, path, err := filepathToFile(msg.Content)
+	// In v1, PasteMsg is a string type, so we use string(msg) to get the content
+	msgContent := string(msg)
+	content, path, err := filepathToFile(msgContent)
 	if err == nil {
 		return content, path, err
 	}
 
-	if strings.Count(msg.Content, "\n") > 2 {
-		return contentToFile([]byte(msg.Content))
+	if strings.Count(msgContent, "\n") > 2 {
+		return contentToFile([]byte(msgContent))
 	}
 
 	return nil, "", errNotAFile

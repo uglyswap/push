@@ -8,8 +8,8 @@ import (
 	"slices"
 	"sync"
 
-	"github.com/charmbracelet/crush/internal/csync"
-	"github.com/charmbracelet/crush/internal/pubsub"
+	"github.com/uglyswap/crush/internal/csync"
+	"github.com/uglyswap/crush/internal/pubsub"
 	"github.com/google/uuid"
 )
 

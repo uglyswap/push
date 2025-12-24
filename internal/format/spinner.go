@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"os"
 
-	tea "charm.land/bubbletea/v2"
-	"github.com/charmbracelet/crush/internal/tui/components/anim"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
+	"github.com/uglyswap/crush/internal/tui/components/anim"
 	"github.com/charmbracelet/x/ansi"
 )
 
@@ -23,12 +23,12 @@ type model struct {
 }
 
 func (m model) Init() tea.Cmd  { return m.anim.Init() }
-func (m model) View() tea.View { return tea.NewView(m.anim.View()) }
+func (m model) View() string { return m.anim.View() }
 
 // Update implements tea.Model.
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case tea.KeyPressMsg:
+	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "esc":
 			m.cancel()
@@ -62,7 +62,7 @@ func (s *Spinner) Start() {
 		_, err := s.prog.Run()
 		// ensures line is cleared
 		fmt.Fprint(os.Stderr, ansi.EraseEntireLine)
-		if err != nil && !errors.Is(err, context.Canceled) && !errors.Is(err, tea.ErrInterrupted) {
+		if err != nil && !errors.Is(err, context.Canceled) {
 			fmt.Fprintf(os.Stderr, "Error running spinner: %v\n", err)
 		}
 	}()

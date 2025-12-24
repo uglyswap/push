@@ -3,7 +3,7 @@ package reasoning
 import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"

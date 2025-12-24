@@ -3,14 +3,10 @@ package tui
 import (
 	"context"
 	"fmt"
-	"math/rand"
-	"regexp"
-	"slices"
-	"strings"
 	"time"
 
 	"github.com/charmbracelet/bubbles/key"
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/uglyswap/crush/internal/agent/tools/mcp"
 	"github.com/uglyswap/crush/internal/app"
@@ -18,7 +14,6 @@ import (
 	"github.com/uglyswap/crush/internal/event"
 	"github.com/uglyswap/crush/internal/permission"
 	"github.com/uglyswap/crush/internal/pubsub"
-	"github.com/uglyswap/crush/internal/stringext"
 	cmpChat "github.com/uglyswap/crush/internal/tui/components/chat"
 	"github.com/uglyswap/crush/internal/tui/components/chat/splash"
 	"github.com/uglyswap/crush/internal/tui/components/completions"
@@ -36,7 +31,6 @@ import (
 	"github.com/uglyswap/crush/internal/tui/page/chat"
 	"github.com/uglyswap/crush/internal/tui/styles"
 	"github.com/uglyswap/crush/internal/tui/util"
-	"golang.org/x/mod/semver"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
@@ -44,14 +38,17 @@ import (
 var lastMouseEvent time.Time
 
 func MouseEventFilter(m tea.Model, msg tea.Msg) tea.Msg {
-	switch msg.(type) {
-	case tea.MouseWheelMsg, tea.MouseMotionMsg:
-		now := time.Now()
-		// trackpad is sending too many requests
-		if now.Sub(lastMouseEvent) < 15*time.Millisecond {
-			return nil
+	switch msg := msg.(type) {
+	case tea.MouseMsg:
+		// Filter mouse wheel and motion events
+		if msg.Type == tea.MouseWheelUp || msg.Type == tea.MouseWheelDown || msg.Type == tea.MouseMotion {
+			now := time.Now()
+			// trackpad is sending too many requests
+			if now.Sub(lastMouseEvent) < 15*time.Millisecond {
+				return nil
+			}
+			lastMouseEvent = now
 		}
-		lastMouseEvent = now
 	}
 	return msg
 }
@@ -103,9 +100,7 @@ func (a appModel) Init() tea.Cmd {
 
 	cmd = a.status.Init()
 	cmds = append(cmds, cmd)
-	if a.QueryVersion {
-		cmds = append(cmds, tea.RequestTerminalVersion)
-	}
+	// In v1, tea.RequestTerminalVersion doesn't exist, skip version querying
 
 	return tea.Batch(cmds...)
 }
@@ -117,41 +112,8 @@ func (a *appModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	a.isConfigured = config.HasInitialDataConfig()
 
 	switch msg := msg.(type) {
-	case tea.EnvMsg:
-		// Is this Windows Terminal?
-		if !a.sendProgressBar {
-			a.sendProgressBar = slices.Contains(msg, "WT_SESSION")
-		}
-	case tea.TerminalVersionMsg:
-		if a.sendProgressBar {
-			return a, nil
-		}
-		termVersion := strings.ToLower(msg.Name)
-		switch {
-		case stringext.ContainsAny(termVersion, "ghostty", "rio"):
-			a.sendProgressBar = true
-		case strings.Contains(termVersion, "iterm2"):
-			// iTerm2 supports progress bars from version v3.6.6
-			matches := regexp.MustCompile(`^iterm2 (\d+\.\d+\.\d+)$`).FindStringSubmatch(termVersion)
-			if len(matches) == 2 && semver.Compare("v"+matches[1], "v3.6.6") >= 0 {
-				a.sendProgressBar = true
-			}
-		}
-		return a, nil
-	case tea.KeyboardEnhancementsMsg:
-		// A non-zero value means we have key disambiguation support.
-		if msg.Flags > 0 {
-			a.keyMap.Models.SetHelp("ctrl+m", "models")
-		}
-		for id, page := range a.pages {
-			m, pageCmd := page.Update(msg)
-			a.pages[id] = m
-
-			if pageCmd != nil {
-				cmds = append(cmds, pageCmd)
-			}
-		}
-		return a, tea.Batch(cmds...)
+	// In v1, tea.EnvMsg, tea.TerminalVersionMsg, tea.KeyboardEnhancementsMsg don't exist
+	// Progress bar and keyboard enhancements features are v2-only
 	case tea.WindowSizeMsg:
 		a.wWidth, a.wHeight = msg.Width, msg.Height
 		a.completions.Update(msg)
@@ -549,7 +511,8 @@ func (a *appModel) handleKeyPressMsg(msg tea.KeyPressMsg) tea.Cmd {
 		if a.app.AgentCoordinator != nil && a.app.AgentCoordinator.IsBusy() {
 			return util.ReportWarn("Agent is busy, please wait...")
 		}
-		return tea.Suspend
+		// In v1, tea.Suspend doesn't exist - just return nil
+		return nil
 	default:
 		item, ok := a.pages[a.currentPage]
 		if !ok {
@@ -586,23 +549,19 @@ func (a *appModel) moveToPage(pageID page.PageID) tea.Cmd {
 }
 
 // View renders the complete application interface including pages, dialogs, and overlays.
-func (a *appModel) View() tea.View {
-	var view tea.View
+func (a *appModel) View() string {
 	t := styles.CurrentTheme()
-	view.AltScreen = true
-	view.MouseMode = tea.MouseModeCellMotion
-	view.BackgroundColor = t.BgBase
+
 	if a.wWidth < 25 || a.wHeight < 15 {
-		view.Content = t.S().Base.Width(a.wWidth).Height(a.wHeight).
+		return t.S().Base.Width(a.wWidth).Height(a.wHeight).
 			Align(lipgloss.Center, lipgloss.Center).
 			Render(t.S().Base.
 				Padding(1, 4).
-				Foreground(t.White).
-				BorderStyle(lipgloss.RoundedBorder()).
-				BorderForeground(t.Primary).
+				Foreground(styles.TC(t.White)).
+				Border(lipgloss.RoundedBorder()).
+				BorderForeground(styles.TC(t.Primary)).
 				Render("Window too small!"),
 			)
-		return view
 	}
 
 	page := a.pages[a.currentPage]
@@ -616,52 +575,36 @@ func (a *appModel) View() tea.View {
 	components = append(components, a.status.View())
 
 	appView := lipgloss.JoinVertical(lipgloss.Top, components...)
-	layers := []*lipgloss.Layer{
-		lipgloss.NewLayer(appView),
-	}
+
+	// In v1 lipgloss, there's no Layer/Compositor system
+	// We use lipgloss.Place to overlay dialogs and completions
+	result := appView
+
 	if a.dialog.HasDialogs() {
-		layers = append(
-			layers,
-			a.dialog.GetLayers()...,
+		// Overlay the dialog on top of the app view
+		dialogView := a.dialog.View()
+		result = lipgloss.Place(a.wWidth, a.wHeight, lipgloss.Center, lipgloss.Center,
+			dialogView,
+			lipgloss.WithWhitespaceChars(" "),
+			lipgloss.WithWhitespaceForeground(styles.TC(t.BgBase)),
 		)
 	}
 
-	var cursor *tea.Cursor
-	if v, ok := page.(util.Cursor); ok {
-		cursor = v.Cursor()
-		// Hide the cursor if it's positioned outside the textarea
-		statusHeight := a.height - strings.Count(pageView, "\n") + 1
-		if cursor != nil && cursor.Y+statusHeight+chat.EditorHeight-2 <= a.height { // 2 for the top and bottom app padding
-			cursor = nil
-		}
-	}
-	activeView := a.dialog.ActiveModel()
-	if activeView != nil {
-		cursor = nil // Reset cursor if a dialog is active unless it implements util.Cursor
-		if v, ok := activeView.(util.Cursor); ok {
-			cursor = v.Cursor()
-		}
-	}
-
-	if a.completions.Open() && cursor != nil {
-		cmp := a.completions.View()
+	if a.completions.Open() {
+		cmpView := a.completions.View()
 		x, y := a.completions.Position()
-		layers = append(
-			layers,
-			lipgloss.NewLayer(cmp).X(x).Y(y),
-		)
+		// Place completions at specific position by padding
+		if x > 0 || y > 0 {
+			paddedCmp := lipgloss.NewStyle().MarginLeft(x).MarginTop(y).Render(cmpView)
+			// Overlay on top of current result
+			result = lipgloss.Place(a.wWidth, a.wHeight, lipgloss.Left, lipgloss.Top,
+				paddedCmp,
+				lipgloss.WithWhitespaceChars(" "),
+			)
+		}
 	}
 
-	comp := lipgloss.NewCompositor(layers...)
-	view.Content = comp.Render()
-	view.Cursor = cursor
-
-	if a.sendProgressBar && a.app != nil && a.app.AgentCoordinator != nil && a.app.AgentCoordinator.IsBusy() {
-		// HACK: use a random percentage to prevent ghostty from hiding it
-		// after a timeout.
-		view.ProgressBar = tea.NewProgressBar(tea.ProgressBarIndeterminate, rand.Intn(100))
-	}
-	return view
+	return result
 }
 
 func (a *appModel) handleStateChanged(ctx context.Context) tea.Cmd {

@@ -7,7 +7,8 @@ import (
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/spinner"
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
+	compattextinput "github.com/uglyswap/crush/internal/compat/bubbles/textinput"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/atotto/clipboard"
 	"github.com/uglyswap/crush/internal/catwalk"
@@ -28,6 +29,7 @@ import (
 	"github.com/uglyswap/crush/internal/tui/exp/list"
 	"github.com/uglyswap/crush/internal/tui/styles"
 	"github.com/uglyswap/crush/internal/tui/util"
+	"github.com/uglyswap/crush/internal/uiutil"
 	"github.com/uglyswap/crush/internal/version"
 )
 
@@ -35,7 +37,7 @@ type Splash interface {
 	util.Model
 	layout.Sizeable
 	layout.Help
-	Cursor() *tea.Cursor
+	Cursor() *uiutil.CursorPosition
 	// SetOnboarding controls whether the splash shows model selection UI
 	SetOnboarding(bool)
 	// SetProjectInit controls whether the splash shows project initialization prompt
@@ -661,7 +663,7 @@ func (s *splashCmp) View() string {
 		authMethodSelector := t.S().Base.AlignVertical(lipgloss.Bottom).Height(remainingHeight).Render(
 			lipgloss.JoinVertical(
 				lipgloss.Left,
-				t.S().Base.PaddingLeft(1).Foreground(t.Primary).Render("Let's Auth Anthropic"),
+				t.S().Base.PaddingLeft(1).Foreground(styles.TC(t.Primary)).Render("Let's Auth Anthropic"),
 				"",
 				chooserView,
 			),
@@ -677,7 +679,7 @@ func (s *splashCmp) View() string {
 		oauthSelector := t.S().Base.AlignVertical(lipgloss.Bottom).Height(remainingHeight).Render(
 			lipgloss.JoinVertical(
 				lipgloss.Left,
-				t.S().Base.PaddingLeft(1).Foreground(t.Primary).Render("Let's Auth Anthropic"),
+				t.S().Base.PaddingLeft(1).Foreground(styles.TC(t.Primary)).Render("Let's Auth Anthropic"),
 				"",
 				oauth2View,
 			),
@@ -693,7 +695,7 @@ func (s *splashCmp) View() string {
 		hyperSelector := t.S().Base.AlignVertical(lipgloss.Bottom).Height(remainingHeight).Render(
 			lipgloss.JoinVertical(
 				lipgloss.Left,
-				t.S().Base.PaddingLeft(1).Foreground(t.Primary).Render("Let's Auth Hyper"),
+				t.S().Base.PaddingLeft(1).Foreground(styles.TC(t.Primary)).Render("Let's Auth Hyper"),
 				hyperView,
 			),
 		)
@@ -708,7 +710,7 @@ func (s *splashCmp) View() string {
 		copilotSelector := t.S().Base.AlignVertical(lipgloss.Bottom).Height(remainingHeight).Render(
 			lipgloss.JoinVertical(
 				lipgloss.Left,
-				t.S().Base.PaddingLeft(1).Foreground(t.Primary).Render("Let's Auth GitHub Copilot"),
+				t.S().Base.PaddingLeft(1).Foreground(styles.TC(t.Primary)).Render("Let's Auth GitHub Copilot"),
 				copilotView,
 			),
 		)
@@ -737,7 +739,7 @@ func (s *splashCmp) View() string {
 		modelSelector := t.S().Base.AlignVertical(lipgloss.Bottom).Height(remainingHeight).Render(
 			lipgloss.JoinVertical(
 				lipgloss.Left,
-				t.S().Base.PaddingLeft(1).Foreground(t.Primary).Render("To start, let's choose a provider and model."),
+				t.S().Base.PaddingLeft(1).Foreground(styles.TC(t.Primary)).Render("To start, let's choose a provider and model."),
 				"",
 				modelListView,
 			),
@@ -748,10 +750,10 @@ func (s *splashCmp) View() string {
 			modelSelector,
 		)
 	case s.needsProjectInit:
-		titleStyle := t.S().Base.Foreground(t.FgBase)
-		pathStyle := t.S().Base.Foreground(t.Success).PaddingLeft(2)
-		bodyStyle := t.S().Base.Foreground(t.FgMuted)
-		shortcutStyle := t.S().Base.Foreground(t.Success)
+		titleStyle := t.S().Base.Foreground(styles.TC(t.FgBase))
+		pathStyle := t.S().Base.Foreground(styles.TC(t.Success)).PaddingLeft(2)
+		bodyStyle := t.S().Base.Foreground(styles.TC(t.FgMuted))
+		shortcutStyle := t.S().Base.Foreground(styles.TC(t.Success))
 
 		initFile := config.Get().Options.InitializeAs
 		initText := lipgloss.JoinVertical(
@@ -814,24 +816,36 @@ func (s *splashCmp) View() string {
 		Render(content)
 }
 
-func (s *splashCmp) Cursor() *tea.Cursor {
+func (s *splashCmp) Cursor() *uiutil.CursorPosition {
 	switch {
 	case s.showClaudeAuthMethodChooser:
 		return nil
 	case s.showClaudeOAuth2:
-		if cursor := s.claudeOAuth2.CodeInput.Cursor(); cursor != nil {
-			cursor.Y += 2 // FIXME(@andreynering): Why do we need this?
+		inputCursor := compattextinput.GetCursorPosition(&s.claudeOAuth2.CodeInput)
+		if inputCursor != nil {
+			cursor := &uiutil.CursorPosition{
+				X: inputCursor.X,
+				Y: inputCursor.Y + 2, // FIXME(@andreynering): Why do we need this?
+			}
 			return s.moveCursor(cursor)
 		}
 		return nil
 	case s.needsAPIKey:
-		cursor := s.apiKeyInput.Cursor()
-		if cursor != nil {
+		apiCursor := s.apiKeyInput.Cursor()
+		if apiCursor != nil {
+			cursor := &uiutil.CursorPosition{
+				X: apiCursor.X,
+				Y: apiCursor.Y,
+			}
 			return s.moveCursor(cursor)
 		}
 	case s.isOnboarding:
-		cursor := s.modelList.Cursor()
-		if cursor != nil {
+		listCursor := s.modelList.Cursor()
+		if listCursor != nil {
+			cursor := &uiutil.CursorPosition{
+				X: listCursor.X,
+				Y: listCursor.Y,
+			}
 			return s.moveCursor(cursor)
 		}
 	}
@@ -888,7 +902,7 @@ func (s *splashCmp) logoBlock() string {
 	)
 }
 
-func (s *splashCmp) moveCursor(cursor *tea.Cursor) *tea.Cursor {
+func (s *splashCmp) moveCursor(cursor *uiutil.CursorPosition) *uiutil.CursorPosition {
 	if cursor == nil {
 		return nil
 	}
@@ -1026,7 +1040,7 @@ func (s *splashCmp) currentModelBlock() string {
 		return ""
 	}
 	t := styles.CurrentTheme()
-	modelIcon := t.S().Base.Foreground(t.FgSubtle).Render(styles.ModelIcon)
+	modelIcon := t.S().Base.Foreground(styles.TC(t.FgSubtle)).Render(styles.ModelIcon)
 	modelName := t.S().Text.Render(model.Name)
 	modelInfo := fmt.Sprintf("%s %s", modelIcon, modelName)
 	parts := []string{

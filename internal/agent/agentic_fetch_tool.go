@@ -9,11 +9,11 @@ import (
 	"os"
 	"time"
 
-	"charm.land/fantasy"
+	"github.com/uglyswap/crush/pkg/fantasy"
 
-	"github.com/charmbracelet/crush/internal/agent/prompt"
-	"github.com/charmbracelet/crush/internal/agent/tools"
-	"github.com/charmbracelet/crush/internal/permission"
+	"github.com/uglyswap/crush/internal/agent/prompt"
+	"github.com/uglyswap/crush/internal/agent/tools"
+	"github.com/uglyswap/crush/internal/permission"
 )
 
 //go:embed templates/agentic_fetch.md
@@ -158,11 +158,11 @@ func (c *coordinator) agenticFetchTool(_ context.Context, client *http.Client) (
 				return fantasy.ToolResponse{}, errors.New("small model provider not configured")
 			}
 
-			webFetchTool := tools.NewWebFetchTool(tmpDir, client)
-			webSearchTool := tools.NewWebSearchTool(client)
+			webFetchTool := tools.NewWebFetchToolWithClient(tmpDir, client)
+			webSearchTool := tools.NewWebSearchToolWithHTTPClient(client)
 			fetchTools := []fantasy.AgentTool{
-				webFetchTool,
-				webSearchTool,
+				tools.NewWebFetchToolAdapter(webFetchTool),
+				tools.NewWebSearchToolAdapter(webSearchTool),
 				tools.NewGlobTool(tmpDir),
 				tools.NewGrepTool(tmpDir),
 				tools.NewSourcegraphTool(client),

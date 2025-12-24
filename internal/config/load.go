@@ -17,13 +17,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/charmbracelet/catwalk/pkg/catwalk"
-	"github.com/charmbracelet/crush/internal/agent/hyper"
-	"github.com/charmbracelet/crush/internal/csync"
-	"github.com/charmbracelet/crush/internal/env"
-	"github.com/charmbracelet/crush/internal/fsext"
-	"github.com/charmbracelet/crush/internal/home"
-	"github.com/charmbracelet/crush/internal/log"
+	"github.com/uglyswap/crush/internal/catwalk"
+	"github.com/uglyswap/crush/internal/agent/hyper"
+	"github.com/uglyswap/crush/internal/csync"
+	"github.com/uglyswap/crush/internal/env"
+	"github.com/uglyswap/crush/internal/fsext"
+	"github.com/uglyswap/crush/internal/home"
+	"github.com/uglyswap/crush/internal/log"
 	powernapConfig "github.com/charmbracelet/x/powernap/pkg/config"
 )
 

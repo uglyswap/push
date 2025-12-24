@@ -5,7 +5,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/charmbracelet/bubbles/textinput"
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/uglyswap/crush/internal/config"
 	compat_textinput "github.com/uglyswap/crush/internal/compat/bubbles/textinput"

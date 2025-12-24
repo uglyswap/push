@@ -1,6 +1,7 @@
 package orchestrator
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -67,6 +68,17 @@ func (s AgentScore) Status() string {
 	default:
 		return "blocked"
 	}
+}
+
+// String returns a formatted score string.
+func (s AgentScore) String() string {
+	return fmt.Sprintf("%.0f%% (%s) [C:%.0f%% P:%.0f%% Co:%.0f%% R:%.0f%%]",
+		s.Total()*100,
+		s.Grade(),
+		s.Completeness*100,
+		s.Precision*100,
+		s.Coherence*100,
+		s.ContextRetention*100)
 }
 
 // ScoringEngine evaluates agent performance.

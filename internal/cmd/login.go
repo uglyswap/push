@@ -10,12 +10,12 @@ import (
 
 	"charm.land/lipgloss/v2"
 	"github.com/atotto/clipboard"
-	hyperp "github.com/charmbracelet/crush/internal/agent/hyper"
-	"github.com/charmbracelet/crush/internal/config"
-	"github.com/charmbracelet/crush/internal/oauth"
-	"github.com/charmbracelet/crush/internal/oauth/claude"
-	"github.com/charmbracelet/crush/internal/oauth/copilot"
-	"github.com/charmbracelet/crush/internal/oauth/hyper"
+	hyperp "github.com/uglyswap/crush/internal/agent/hyper"
+	"github.com/uglyswap/crush/internal/config"
+	"github.com/uglyswap/crush/internal/oauth"
+	"github.com/uglyswap/crush/internal/oauth/claude"
+	"github.com/uglyswap/crush/internal/oauth/copilot"
+	"github.com/uglyswap/crush/internal/oauth/hyper"
 	"github.com/pkg/browser"
 	"github.com/spf13/cobra"
 )

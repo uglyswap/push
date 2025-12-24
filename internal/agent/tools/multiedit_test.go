@@ -6,11 +6,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/charmbracelet/crush/internal/csync"
-	"github.com/charmbracelet/crush/internal/history"
-	"github.com/charmbracelet/crush/internal/lsp"
-	"github.com/charmbracelet/crush/internal/permission"
-	"github.com/charmbracelet/crush/internal/pubsub"
+	"github.com/uglyswap/crush/internal/csync"
+	"github.com/uglyswap/crush/internal/history"
+	"github.com/uglyswap/crush/internal/lsp"
+	"github.com/uglyswap/crush/internal/permission"
+	"github.com/uglyswap/crush/internal/pubsub"
 	"github.com/stretchr/testify/require"
 )
 

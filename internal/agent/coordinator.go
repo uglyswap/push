@@ -673,15 +673,13 @@ func (c *coordinator) buildGoogleVertexProvider(headers map[string]string, optio
 }
 
 func (c *coordinator) buildHyperProvider(baseURL, apiKey string) (fantasy.Provider, error) {
-	opts := []hyper.Option{
-		hyper.WithBaseURL(baseURL),
-		hyper.WithAPIKey(apiKey),
-	}
-	if c.cfg.Options.Debug {
-		httpClient := log.NewHTTPClient()
-		opts = append(opts, hyper.WithHTTPClient(httpClient))
-	}
-	return hyper.New(opts...)
+	// TODO: Hyper provider uses charm.land/fantasy which has a different interface than pkg/fantasy.
+	// An adapter is needed to bridge between the two fantasy packages.
+	// For now, return an error indicating hyper is not yet supported.
+	_ = baseURL
+	_ = apiKey
+	_ = hyper.Name // Reference hyper to avoid unused import error
+	return nil, errors.New("hyper provider is not yet supported in this build - please use a different provider (anthropic, openai, google, etc.)")
 }
 
 func (c *coordinator) isAnthropicThinking(model config.SelectedModel) bool {

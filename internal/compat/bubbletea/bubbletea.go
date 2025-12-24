@@ -41,6 +41,7 @@ var (
 	Sequence   = tea.Sequence
 	Every      = tea.Every
 	Tick       = tea.Tick
+	ExecProcess = tea.ExecProcess
 
 	// Program options
 	WithAltScreen       = tea.WithAltScreen
@@ -51,7 +52,11 @@ var (
 	WithoutSignalHandler = tea.WithoutSignalHandler
 	WithoutCatchPanics   = tea.WithoutCatchPanics
 	WithANSICompressor   = tea.WithANSICompressor
+	WithContext          = tea.WithContext
 )
+
+// ExecCallback is a callback function for ExecProcess.
+type ExecCallback = tea.ExecCallback
 
 // QuitMsg is a message that tells the program to quit.
 type QuitMsg = tea.QuitMsg
@@ -119,13 +124,42 @@ type ClipboardMsg string
 // In standard bubbletea, mouse wheel events are MouseMsg with Button set to MouseWheelUp/Down.
 type MouseWheelMsg = tea.MouseMsg
 
+// MouseClickMsg is an alias for MouseMsg for mouse click events.
+// In v1, all mouse events come through MouseMsg with different Type values.
+type MouseClickMsg = tea.MouseMsg
+
+// MouseMotionMsg is an alias for MouseMsg for mouse motion events.
+type MouseMotionMsg = tea.MouseMsg
+
+// MouseReleaseMsg is an alias for MouseMsg for mouse release events.
+type MouseReleaseMsg = tea.MouseMsg
+
 // MouseButton is the type for mouse buttons.
 type MouseButton = tea.MouseButton
 
-// Mouse button constants
+// MouseEventType is the type for mouse event types.
+type MouseEventType = tea.MouseEventType
+
+// Mouse button/event type constants
 const (
 	MouseWheelUp   = tea.MouseWheelUp
 	MouseWheelDown = tea.MouseWheelDown
+	MouseLeft      = tea.MouseLeft
+	MouseRight     = tea.MouseRight
+	MouseMiddle    = tea.MouseMiddle
+	MouseRelease   = tea.MouseRelease
+	MouseMotion    = tea.MouseMotion
+)
+
+// Aliases for v2-style mouse button constants
+const (
+	MouseButtonWheelUp    = tea.MouseWheelUp
+	MouseButtonWheelDown  = tea.MouseWheelDown
+	MouseButtonWheelLeft  = tea.MouseWheelUp    // v1 doesn't have horizontal wheel, map to up
+	MouseButtonWheelRight = tea.MouseWheelDown  // v1 doesn't have horizontal wheel, map to down
+	MouseButtonLeft       = tea.MouseLeft
+	MouseButtonRight      = tea.MouseRight
+	MouseButtonMiddle     = tea.MouseMiddle
 )
 
 // PasteMsg is sent when text is pasted from clipboard.

@@ -6,40 +6,41 @@ import (
 	"fmt"
 	"time"
 
-	"charm.land/bubbles/v2/help"
-	"charm.land/bubbles/v2/key"
-	"charm.land/bubbles/v2/spinner"
-	tea "charm.land/bubbletea/v2"
-	"charm.land/lipgloss/v2"
-	"github.com/charmbracelet/crush/internal/app"
-	"github.com/charmbracelet/crush/internal/config"
-	"github.com/charmbracelet/crush/internal/history"
-	"github.com/charmbracelet/crush/internal/message"
-	"github.com/charmbracelet/crush/internal/permission"
-	"github.com/charmbracelet/crush/internal/pubsub"
-	"github.com/charmbracelet/crush/internal/session"
-	"github.com/charmbracelet/crush/internal/tui/components/anim"
-	"github.com/charmbracelet/crush/internal/tui/components/chat"
-	"github.com/charmbracelet/crush/internal/tui/components/chat/editor"
-	"github.com/charmbracelet/crush/internal/tui/components/chat/header"
-	"github.com/charmbracelet/crush/internal/tui/components/chat/messages"
-	"github.com/charmbracelet/crush/internal/tui/components/chat/sidebar"
-	"github.com/charmbracelet/crush/internal/tui/components/chat/splash"
-	"github.com/charmbracelet/crush/internal/tui/components/completions"
-	"github.com/charmbracelet/crush/internal/tui/components/core"
-	"github.com/charmbracelet/crush/internal/tui/components/core/layout"
-	"github.com/charmbracelet/crush/internal/tui/components/dialogs"
-	"github.com/charmbracelet/crush/internal/tui/components/dialogs/claude"
-	"github.com/charmbracelet/crush/internal/tui/components/dialogs/commands"
-	"github.com/charmbracelet/crush/internal/tui/components/dialogs/copilot"
-	"github.com/charmbracelet/crush/internal/tui/components/dialogs/filepicker"
-	"github.com/charmbracelet/crush/internal/tui/components/dialogs/hyper"
-	"github.com/charmbracelet/crush/internal/tui/components/dialogs/models"
-	"github.com/charmbracelet/crush/internal/tui/components/dialogs/reasoning"
-	"github.com/charmbracelet/crush/internal/tui/page"
-	"github.com/charmbracelet/crush/internal/tui/styles"
-	"github.com/charmbracelet/crush/internal/tui/util"
-	"github.com/charmbracelet/crush/internal/version"
+	"github.com/charmbracelet/bubbles/help"
+	"github.com/charmbracelet/bubbles/key"
+	"github.com/charmbracelet/bubbles/spinner"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
+	"github.com/charmbracelet/lipgloss"
+	"github.com/uglyswap/crush/internal/app"
+	"github.com/uglyswap/crush/internal/config"
+	"github.com/uglyswap/crush/internal/history"
+	"github.com/uglyswap/crush/internal/message"
+	"github.com/uglyswap/crush/internal/permission"
+	"github.com/uglyswap/crush/internal/pubsub"
+	"github.com/uglyswap/crush/internal/session"
+	"github.com/uglyswap/crush/internal/tui/components/anim"
+	"github.com/uglyswap/crush/internal/tui/components/chat"
+	"github.com/uglyswap/crush/internal/tui/components/chat/editor"
+	"github.com/uglyswap/crush/internal/tui/components/chat/header"
+	"github.com/uglyswap/crush/internal/tui/components/chat/messages"
+	"github.com/uglyswap/crush/internal/tui/components/chat/sidebar"
+	"github.com/uglyswap/crush/internal/tui/components/chat/splash"
+	"github.com/uglyswap/crush/internal/tui/components/completions"
+	"github.com/uglyswap/crush/internal/tui/components/core"
+	"github.com/uglyswap/crush/internal/tui/components/core/layout"
+	"github.com/uglyswap/crush/internal/tui/components/dialogs"
+	"github.com/uglyswap/crush/internal/tui/components/dialogs/claude"
+	"github.com/uglyswap/crush/internal/tui/components/dialogs/commands"
+	"github.com/uglyswap/crush/internal/tui/components/dialogs/copilot"
+	"github.com/uglyswap/crush/internal/tui/components/dialogs/filepicker"
+	"github.com/uglyswap/crush/internal/tui/components/dialogs/hyper"
+	"github.com/uglyswap/crush/internal/tui/components/dialogs/models"
+	"github.com/uglyswap/crush/internal/tui/components/dialogs/reasoning"
+	"github.com/uglyswap/crush/internal/tui/page"
+	"github.com/uglyswap/crush/internal/tui/styles"
+	"github.com/uglyswap/crush/internal/tui/util"
+	"github.com/uglyswap/crush/internal/uiutil"
+	"github.com/uglyswap/crush/internal/version"
 )
 
 var ChatPageID page.PageID = "chat"
@@ -102,7 +103,7 @@ type chatPage struct {
 	width, height               int
 	detailsWidth, detailsHeight int
 	app                         *app.App
-	keyboardEnhancements        tea.KeyboardEnhancementsMsg
+	keyboardEnhancementsFlags   uint32 // In v1, we track flags directly
 
 	// Layout state
 	compact      bool
@@ -149,7 +150,7 @@ func New(app *app.App) ChatPage {
 		focusedPane: PanelTypeSplash,
 		todoSpinner: spinner.New(
 			spinner.WithSpinner(spinner.MiniDot),
-			spinner.WithStyle(t.S().Base.Foreground(t.GreenDark)),
+			spinner.WithStyle(t.S().Base.Foreground(styles.TC(t.GreenDark))),
 		),
 	}
 }
@@ -197,61 +198,50 @@ func (p *chatPage) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 		}
 	}
 	switch msg := msg.(type) {
-	case tea.KeyboardEnhancementsMsg:
-		p.keyboardEnhancements = msg
-		return p, nil
-	case tea.MouseWheelMsg:
+	// In v1, all mouse events are handled via tea.MouseMsg
+	case tea.MouseMsg:
+		// Adjust Y coordinate in compact mode
 		if p.compact {
 			msg.Y -= 1
 		}
-		if p.isMouseOverChat(msg.X, msg.Y) {
-			u, cmd := p.chat.Update(msg)
-			p.chat = u.(chat.MessageListCmp)
-			return p, cmd
-		}
-		return p, nil
-	case tea.MouseClickMsg:
-		if p.isOnboarding || p.isProjectInit {
+		// Handle different mouse event types
+		switch msg.Type {
+		case tea.MouseWheelUp, tea.MouseWheelDown:
+			if p.isMouseOverChat(msg.X, msg.Y) {
+				u, cmd := p.chat.Update(msg)
+				p.chat = u.(chat.MessageListCmp)
+				return p, cmd
+			}
 			return p, nil
-		}
-		if p.compact {
-			msg.Y -= 1
-		}
-		if p.isMouseOverChat(msg.X, msg.Y) {
-			p.focusedPane = PanelTypeChat
-			p.chat.Focus()
-			p.editor.Blur()
-		} else {
-			p.focusedPane = PanelTypeEditor
-			p.editor.Focus()
-			p.chat.Blur()
-		}
-		u, cmd := p.chat.Update(msg)
-		p.chat = u.(chat.MessageListCmp)
-		return p, cmd
-	case tea.MouseMotionMsg:
-		if p.compact {
-			msg.Y -= 1
-		}
-		if msg.Button == tea.MouseLeft {
+		case tea.MouseLeft: // Click
+			if p.isOnboarding || p.isProjectInit {
+				return p, nil
+			}
+			if p.isMouseOverChat(msg.X, msg.Y) {
+				p.focusedPane = PanelTypeChat
+				p.chat.Focus()
+				p.editor.Blur()
+			} else {
+				p.focusedPane = PanelTypeEditor
+				p.editor.Focus()
+				p.chat.Blur()
+			}
+			u, cmd := p.chat.Update(msg)
+			p.chat = u.(chat.MessageListCmp)
+			return p, cmd
+		case tea.MouseMotion:
+			// Forward motion events to chat
+			u, cmd := p.chat.Update(msg)
+			p.chat = u.(chat.MessageListCmp)
+			return p, cmd
+		case tea.MouseRelease:
+			if p.isOnboarding || p.isProjectInit {
+				return p, nil
+			}
 			u, cmd := p.chat.Update(msg)
 			p.chat = u.(chat.MessageListCmp)
 			return p, cmd
 		}
-		return p, nil
-	case tea.MouseReleaseMsg:
-		if p.isOnboarding || p.isProjectInit {
-			return p, nil
-		}
-		if p.compact {
-			msg.Y -= 1
-		}
-		if msg.Button == tea.MouseLeft {
-			u, cmd := p.chat.Update(msg)
-			p.chat = u.(chat.MessageListCmp)
-			return p, cmd
-		}
-		return p, nil
 	case chat.SelectionCopyMsg:
 		u, cmd := p.chat.Update(msg)
 		p.chat = u.(chat.MessageListCmp)
@@ -520,7 +510,7 @@ func (p *chatPage) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 	return p, tea.Batch(cmds...)
 }
 
-func (p *chatPage) Cursor() *tea.Cursor {
+func (p *chatPage) Cursor() *uiutil.CursorPosition {
 	if p.header.ShowingDetails() {
 		return nil
 	}
@@ -563,7 +553,7 @@ func (p *chatPage) View() string {
 
 		// Use spinner when agent is busy, otherwise show static icon
 		agentBusy := p.app.AgentCoordinator != nil && p.app.AgentCoordinator.IsBusy()
-		inProgressIcon := t.S().Base.Foreground(t.GreenDark).Render(styles.CenterSpinnerIcon)
+		inProgressIcon := t.S().Base.Foreground(styles.TC(t.GreenDark)).Render(styles.CenterSpinnerIcon)
 		if agentBusy {
 			inProgressIcon = p.todoSpinner.View()
 		}
@@ -598,8 +588,8 @@ func (p *chatPage) View() string {
 				helpDesc = "open"
 			}
 			// Style to match help section: keys in FgMuted, description in FgSubtle
-			helpKey := t.S().Base.Foreground(t.FgMuted).Render("ctrl+space")
-			helpText := t.S().Base.Foreground(t.FgSubtle).Render(helpDesc)
+			helpKey := t.S().Base.Foreground(styles.TC(t.FgMuted)).Render("ctrl+space")
+			helpText := t.S().Base.Foreground(styles.TC(t.FgSubtle)).Render(helpDesc)
 			helpHint := lipgloss.JoinHorizontal(lipgloss.Center, helpKey, " ", helpText)
 			pillsRow = lipgloss.JoinHorizontal(lipgloss.Center, pillsRow, " ", helpHint)
 
@@ -653,27 +643,29 @@ func (p *chatPage) View() string {
 		}
 	}
 
-	layers := []*lipgloss.Layer{
-		lipgloss.NewLayer(chatView).X(0).Y(0),
-	}
-
+	// v1 lipgloss doesn't have Layer/Compositor, so we use simpler rendering
 	if p.showingDetails {
 		style := t.S().Base.
 			Width(p.detailsWidth).
 			Border(lipgloss.RoundedBorder()).
-			BorderForeground(t.BorderFocus)
-		version := t.S().Base.Foreground(t.Border).Width(p.detailsWidth - 4).AlignHorizontal(lipgloss.Right).Render(version.Version)
+			BorderForeground(styles.TC(t.BorderFocus))
+		versionStr := t.S().Base.Foreground(styles.TC(t.Border)).Width(p.detailsWidth - 4).AlignHorizontal(lipgloss.Right).Render(version.Version)
 		details := style.Render(
 			lipgloss.JoinVertical(
 				lipgloss.Left,
 				p.sidebar.View(),
-				version,
+				versionStr,
 			),
 		)
-		layers = append(layers, lipgloss.NewLayer(details).X(1).Y(1))
+		// Place details overlay on top of chat
+		return lipgloss.Place(p.width, p.height, lipgloss.Left, lipgloss.Top,
+			lipgloss.JoinVertical(lipgloss.Left,
+				lipgloss.NewStyle().MarginLeft(1).MarginTop(1).Render(details),
+			),
+			lipgloss.WithWhitespaceChars(" "),
+		)
 	}
-	canvas := lipgloss.NewCompositor(layers...)
-	return canvas.Render()
+	return chatView
 }
 
 func (p *chatPage) updateCompactConfig(compact bool) tea.Cmd {
@@ -1260,7 +1252,7 @@ func (p *chatPage) Help() help.KeyMap {
 			key.WithKeys("ctrl+m", "ctrl+l"),
 			key.WithHelp("ctrl+l", "models"),
 		)
-		if p.keyboardEnhancements.Flags > 0 {
+		if p.keyboardEnhancementsFlags > 0 {
 			// non-zero flags mean we have at least key disambiguation
 			modelsBinding.SetHelp("ctrl+m", "models")
 		}
@@ -1348,7 +1340,7 @@ func (p *chatPage) Help() help.KeyMap {
 				// to reflect that.
 				key.WithHelp("ctrl+j", "newline"),
 			)
-			if p.keyboardEnhancements.Flags > 0 {
+			if p.keyboardEnhancementsFlags > 0 {
 				// Non-zero flags mean we have at least key disambiguation.
 				newLineBinding.SetHelp("shift+enter", newLineBinding.Help().Desc)
 			}

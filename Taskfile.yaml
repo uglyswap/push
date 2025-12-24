@@ -35,7 +35,7 @@ tasks:
   build:
     desc: Run build
     vars:
-      LDFLAGS: '{{if .VERSION}}-ldflags="-X github.com/charmbracelet/crush/internal/version.Version={{.VERSION}}"{{end}}'
+      LDFLAGS: '{{if .VERSION}}-ldflags="-X github.com/uglyswap/crush/internal/version.Version={{.VERSION}}"{{end}}'
     cmds:
       - go build {{.LDFLAGS}} .
     generates:
@@ -73,7 +73,7 @@ tasks:
   install:
     desc: Install the application
     vars:
-      LDFLAGS: '{{if .VERSION}}-ldflags="-X github.com/charmbracelet/crush/internal/version.Version={{.VERSION}}"{{end}}'
+      LDFLAGS: '{{if .VERSION}}-ldflags="-X github.com/uglyswap/crush/internal/version.Version={{.VERSION}}"{{end}}'
     cmds:
       - task: fetch-tags
       - go install {{.LDFLAGS}} -v .
@@ -132,8 +132,8 @@ tasks:
       - git fetch --tags
 
   deps:
-    desc: Update Fantasy and Catwalk
+    desc: Update Fantasy
     cmds:
       - go get charm.land/fantasy
-      - go get github.com/charmbracelet/catwalk
+      - # Removed: using internal/catwalk stub
       - go mod tidy

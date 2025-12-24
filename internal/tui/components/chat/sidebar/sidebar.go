@@ -6,7 +6,7 @@ import (
 	"slices"
 	"strings"
 
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/uglyswap/crush/internal/catwalk"
 	"github.com/uglyswap/crush/internal/config"
@@ -530,10 +530,10 @@ func formatTokensAndCost(tokens, contextWindow int64, cost float64) string {
 
 	baseStyle := t.S().Base
 
-	formattedCost := baseStyle.Foreground(t.FgMuted).Render(fmt.Sprintf("$%.2f", cost))
+	formattedCost := baseStyle.Foreground(styles.TC(t.FgMuted)).Render(fmt.Sprintf("$%.2f", cost))
 
-	formattedTokens = baseStyle.Foreground(t.FgSubtle).Render(fmt.Sprintf("(%s)", formattedTokens))
-	formattedPercentage := baseStyle.Foreground(t.FgMuted).Render(fmt.Sprintf("%d%%", int(percentage)))
+	formattedTokens = baseStyle.Foreground(styles.TC(t.FgSubtle)).Render(fmt.Sprintf("(%s)", formattedTokens))
+	formattedPercentage := baseStyle.Foreground(styles.TC(t.FgMuted)).Render(fmt.Sprintf("%d%%", int(percentage)))
 	formattedTokens = fmt.Sprintf("%s %s", formattedPercentage, formattedTokens)
 	if percentage > 80 {
 		// add the warning icon
@@ -554,7 +554,7 @@ func (s *sidebarCmp) currentModelBlock() string {
 
 	t := styles.CurrentTheme()
 
-	modelIcon := t.S().Base.Foreground(t.FgSubtle).Render(styles.ModelIcon)
+	modelIcon := t.S().Base.Foreground(styles.TC(t.FgSubtle)).Render(styles.ModelIcon)
 	modelName := t.S().Text.Render(model.Name)
 	modelInfo := fmt.Sprintf("%s %s", modelIcon, modelName)
 	parts := []string{

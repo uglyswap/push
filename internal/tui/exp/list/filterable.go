@@ -6,7 +6,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 	compat_tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 	compat_textinput "github.com/uglyswap/crush/internal/compat/bubbles/textinput"
 	"github.com/charmbracelet/lipgloss"

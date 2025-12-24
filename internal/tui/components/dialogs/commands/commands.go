@@ -8,7 +8,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/uglyswap/crush/internal/catwalk"
 
@@ -25,6 +25,7 @@ import (
 	"github.com/uglyswap/crush/internal/tui/styles"
 	"github.com/uglyswap/crush/internal/tui/util"
 	"github.com/uglyswap/crush/internal/uicmd"
+	"github.com/uglyswap/crush/internal/uiutil"
 )
 
 const (
@@ -216,15 +217,16 @@ func (c *commandDialogCmp) View() string {
 	return c.style().Render(content)
 }
 
-func (c *commandDialogCmp) Cursor() *tea.Cursor {
-	if cursor, ok := c.commandList.(util.Cursor); ok {
-		cursor := cursor.Cursor()
-		if cursor != nil {
-			cursor = c.moveCursor(cursor)
-		}
-		return cursor
+func (c *commandDialogCmp) Cursor() *uiutil.CursorPosition {
+	listCursor := c.commandList.Cursor()
+	if listCursor == nil {
+		return nil
 	}
-	return nil
+	cursor := &uiutil.CursorPosition{
+		X: listCursor.X,
+		Y: listCursor.Y,
+	}
+	return c.moveCursor(cursor)
 }
 
 func (c *commandDialogCmp) commandTypeRadio() string {
@@ -246,7 +248,7 @@ func (c *commandDialogCmp) commandTypeRadio() string {
 	if c.mcpPrompts.Len() > 0 {
 		parts = append(parts, fn(MCPPrompts))
 	}
-	return t.S().Base.Foreground(t.FgHalfMuted).Render(strings.Join(parts, " "))
+	return t.S().Base.Foreground(styles.TC(t.FgHalfMuted)).Render(strings.Join(parts, " "))
 }
 
 func (c *commandDialogCmp) listWidth() int {
@@ -287,7 +289,7 @@ func (c *commandDialogCmp) listHeight() int {
 	return min(listHeigh, c.wHeight/2)
 }
 
-func (c *commandDialogCmp) moveCursor(cursor *tea.Cursor) *tea.Cursor {
+func (c *commandDialogCmp) moveCursor(cursor *uiutil.CursorPosition) *uiutil.CursorPosition {
 	row, col := c.Position()
 	offset := row + 3
 	cursor.Y += offset
@@ -300,7 +302,7 @@ func (c *commandDialogCmp) style() lipgloss.Style {
 	return t.S().Base.
 		Width(c.width).
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(t.BorderFocus)
+		BorderForeground(styles.TC(t.BorderFocus))
 }
 
 func (c *commandDialogCmp) Position() (int, int) {

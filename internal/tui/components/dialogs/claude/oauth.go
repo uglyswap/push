@@ -8,7 +8,7 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/charmbracelet/bubbles/textinput"
 	compat_textinput "github.com/uglyswap/crush/internal/compat/bubbles/textinput"
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 	"github.com/uglyswap/crush/internal/compat/lipgloss"
 	"github.com/uglyswap/crush/internal/oauth"
 	"github.com/uglyswap/crush/internal/oauth/claude"

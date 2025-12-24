@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/charmbracelet/crush/internal/session"
+	"github.com/uglyswap/crush/internal/session"
 )
 
 // Orchestrator coordinates multiple specialized agents for complex tasks.

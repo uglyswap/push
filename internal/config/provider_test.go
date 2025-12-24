@@ -7,7 +7,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/charmbracelet/catwalk/pkg/catwalk"
+	"github.com/uglyswap/crush/internal/catwalk"
 	"github.com/stretchr/testify/require"
 )
 

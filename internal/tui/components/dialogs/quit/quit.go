@@ -2,7 +2,7 @@ package quit
 
 import (
 	"github.com/charmbracelet/bubbles/key"
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/uglyswap/crush/internal/tui/components/dialogs"
 	"github.com/uglyswap/crush/internal/tui/styles"

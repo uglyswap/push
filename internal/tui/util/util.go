@@ -1,7 +1,7 @@
 package util
 
 import (
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 	compat_tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 	"github.com/uglyswap/crush/internal/uiutil"
 )

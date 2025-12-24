@@ -6,12 +6,14 @@ import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
+	compattextinput "github.com/uglyswap/crush/internal/compat/bubbles/textinput"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/uglyswap/crush/internal/tui/components/dialogs"
 	"github.com/uglyswap/crush/internal/tui/styles"
 	"github.com/uglyswap/crush/internal/tui/util"
 	"github.com/uglyswap/crush/internal/uicmd"
+	"github.com/uglyswap/crush/internal/uiutil"
 )
 
 const (
@@ -63,11 +65,10 @@ func NewCommandArgumentsDialog(
 	for i, arg := range arguments {
 		ti := textinput.New()
 		ti.Placeholder = cmp.Or(arg.Description, "Enter value for "+arg.Title)
-		ti.SetWidth(40)
-		ti.SetVirtualCursor(false)
+		ti.Width = 40
 		ti.Prompt = ""
 
-		ti.SetStyles(t.S().TextInput)
+		compattextinput.SetStylesOnModel(&ti, t.S().TextInput)
 		// Only focus the first input initially
 		if i == 0 {
 			ti.Focus()
@@ -106,9 +107,9 @@ func (c *commandArgumentsDialogCmp) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 		c.width = min(90, c.wWidth)
 		c.height = min(15, c.wHeight)
 		for i := range c.inputs {
-			c.inputs[i].SetWidth(c.width - (paddingHorizontal * 2))
+			c.inputs[i].Width = c.width - (paddingHorizontal * 2)
 		}
-	case tea.KeyPressMsg:
+	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, c.keys.Close):
 			return c, util.CmdHandler(dialogs.CloseDialogMsg{})
@@ -159,7 +160,7 @@ func (c *commandArgumentsDialogCmp) View() string {
 	baseStyle := t.S().Base
 
 	title := lipgloss.NewStyle().
-		Foreground(t.Primary).
+		Foreground(styles.TC(t.Primary)).
 		Bold(true).
 		Padding(0, 1).
 		Render(cmp.Or(c.title, c.name))
@@ -173,9 +174,9 @@ func (c *commandArgumentsDialogCmp) View() string {
 		labelStyle := baseStyle.Padding(1, 1, 0, 1)
 
 		if i == c.focused {
-			labelStyle = labelStyle.Foreground(t.FgBase).Bold(true)
+			labelStyle = labelStyle.Foreground(styles.TC(t.FgBase)).Bold(true)
 		} else {
-			labelStyle = labelStyle.Foreground(t.FgMuted)
+			labelStyle = labelStyle.Foreground(styles.TC(t.FgMuted))
 		}
 
 		arg := c.arguments[i]
@@ -203,20 +204,24 @@ func (c *commandArgumentsDialogCmp) View() string {
 
 	return baseStyle.Padding(1, 1, 0, 1).
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(t.BorderFocus).
+		BorderForeground(styles.TC(t.BorderFocus)).
 		Width(c.width).
 		Render(content)
 }
 
-func (c *commandArgumentsDialogCmp) Cursor() *tea.Cursor {
+func (c *commandArgumentsDialogCmp) Cursor() *uiutil.CursorPosition {
 	if len(c.inputs) == 0 {
 		return nil
 	}
-	cursor := c.inputs[c.focused].Cursor()
-	if cursor != nil {
-		cursor = c.moveCursor(cursor)
+	inputCursor := compattextinput.GetCursorPosition(&c.inputs[c.focused])
+	if inputCursor == nil {
+		return nil
 	}
-	return cursor
+	cursor := &uiutil.CursorPosition{
+		X: inputCursor.X,
+		Y: inputCursor.Y,
+	}
+	return c.moveCursor(cursor)
 }
 
 const (
@@ -225,7 +230,7 @@ const (
 	paddingHorizontal = 3
 )
 
-func (c *commandArgumentsDialogCmp) moveCursor(cursor *tea.Cursor) *tea.Cursor {
+func (c *commandArgumentsDialogCmp) moveCursor(cursor *uiutil.CursorPosition) *uiutil.CursorPosition {
 	row, col := c.Position()
 	offset := row + headerHeight + (1+c.focused)*itemHeight
 	cursor.Y += offset

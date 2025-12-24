@@ -3,8 +3,8 @@ package agent
 import (
 	"time"
 
-	"charm.land/fantasy"
-	"github.com/charmbracelet/crush/internal/event"
+	"github.com/uglyswap/crush/pkg/fantasy"
+	"github.com/uglyswap/crush/internal/event"
 )
 
 func (a sessionAgent) eventPromptSent(sessionID string) {

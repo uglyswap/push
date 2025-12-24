@@ -3,7 +3,7 @@ package list
 import (
 	"image/color"
 
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	compat_lipgloss "github.com/uglyswap/crush/internal/compat/lipgloss"
 	"github.com/uglyswap/crush/internal/tui/components/core"

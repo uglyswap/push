@@ -11,9 +11,9 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/charmbracelet/crush/internal/config"
-	"github.com/charmbracelet/crush/internal/home"
-	"github.com/charmbracelet/crush/internal/shell"
+	"github.com/uglyswap/crush/internal/config"
+	"github.com/uglyswap/crush/internal/home"
+	"github.com/uglyswap/crush/internal/shell"
 )
 
 // Prompt represents a template-based prompt generator.

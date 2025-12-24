@@ -10,7 +10,7 @@ import (
 	"github.com/charmbracelet/bubbles/filepicker"
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	compat_filepicker "github.com/uglyswap/crush/internal/compat/bubbles/filepicker"
 	"github.com/uglyswap/crush/internal/home"

@@ -7,10 +7,10 @@ import (
 	"strings"
 	"testing"
 
-	"charm.land/fantasy"
+	"github.com/uglyswap/crush/pkg/fantasy"
 	"charm.land/x/vcr"
-	"github.com/charmbracelet/crush/internal/agent/tools"
-	"github.com/charmbracelet/crush/internal/message"
+	"github.com/uglyswap/crush/internal/agent/tools"
+	"github.com/uglyswap/crush/internal/message"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 

@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/charmbracelet/bubbles/key"
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/atotto/clipboard"
 	"github.com/uglyswap/crush/internal/agent"
@@ -164,7 +164,7 @@ func (m *toolCallCmp) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 			cmds = append(cmds, cmd)
 		}
 		return m, tea.Batch(cmds...)
-	case tea.KeyPressMsg:
+	case tea.KeyMsg:
 		if key.Matches(msg, CopyKey) {
 			return m, m.copyTool()
 		}
@@ -199,7 +199,6 @@ func (m *toolCallCmp) SetCancelled() {
 func (m *toolCallCmp) copyTool() tea.Cmd {
 	content := m.formatToolForCopy()
 	return tea.Sequence(
-		tea.SetClipboard(content),
 		func() tea.Msg {
 			_ = clipboard.WriteAll(content)
 			return nil
@@ -763,12 +762,12 @@ func (m *toolCallCmp) SetIsNested(isNested bool) {
 // renderPending displays the tool name with a loading animation for pending tool calls
 func (m *toolCallCmp) renderPending() string {
 	t := styles.CurrentTheme()
-	icon := t.S().Base.Foreground(t.GreenDark).Render(styles.ToolPending)
+	icon := t.S().Base.Foreground(styles.TC(t.GreenDark)).Render(styles.ToolPending)
 	if m.isNested {
-		tool := t.S().Base.Foreground(t.FgHalfMuted).Render(prettifyToolName(m.call.Name))
+		tool := t.S().Base.Foreground(styles.TC(t.FgHalfMuted)).Render(prettifyToolName(m.call.Name))
 		return fmt.Sprintf("%s %s %s", icon, tool, m.anim.View())
 	}
-	tool := t.S().Base.Foreground(t.Blue).Render(prettifyToolName(m.call.Name))
+	tool := t.S().Base.Foreground(styles.TC(t.Blue)).Render(prettifyToolName(m.call.Name))
 	return fmt.Sprintf("%s %s %s", icon, tool, m.anim.View())
 }
 
@@ -783,7 +782,7 @@ func (m *toolCallCmp) style() lipgloss.Style {
 	style := t.S().Muted.PaddingLeft(2)
 
 	if m.focused {
-		style = style.PaddingLeft(1).BorderStyle(focusedMessageBorder).BorderLeft(true).BorderForeground(t.GreenDark)
+		style = style.PaddingLeft(1).BorderStyle(focusedMessageBorder).BorderLeft(true).BorderForeground(styles.TC(t.GreenDark))
 	}
 	return style
 }

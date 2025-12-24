@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	"charm.land/lipgloss/v2"
-	"github.com/charmbracelet/crush/internal/session"
-	"github.com/charmbracelet/crush/internal/tui/components/chat/todos"
-	"github.com/charmbracelet/crush/internal/tui/styles"
+	"github.com/charmbracelet/lipgloss"
+	"github.com/uglyswap/crush/internal/session"
+	"github.com/uglyswap/crush/internal/tui/components/chat/todos"
+	"github.com/uglyswap/crush/internal/tui/styles"
 )
 
 func hasIncompleteTodos(todos []session.Todo) bool {
@@ -38,9 +38,9 @@ func queuePill(queue int, focused, pillsPanelFocused bool, t *styles.Theme) stri
 
 	style := t.S().Base.PaddingLeft(1).PaddingRight(1)
 	if !pillsPanelFocused || focused {
-		style = style.BorderStyle(lipgloss.RoundedBorder()).BorderForeground(t.BgOverlay)
+		style = style.Border(lipgloss.RoundedBorder()).BorderForeground(styles.TC(t.BgOverlay))
 	} else {
-		style = style.BorderStyle(lipgloss.HiddenBorder())
+		style = style.Border(lipgloss.HiddenBorder())
 	}
 	return style.Render(content)
 }
@@ -66,7 +66,7 @@ func todoPill(todos []session.Todo, spinnerView string, focused, pillsPanelFocus
 	total := len(todos)
 
 	label := "To-Do"
-	progress := t.S().Base.Foreground(t.FgMuted).Render(fmt.Sprintf("%d/%d", completed, total))
+	progress := t.S().Base.Foreground(styles.TC(t.FgMuted)).Render(fmt.Sprintf("%d/%d", completed, total))
 
 	var content string
 	if pillsPanelFocused {
@@ -79,7 +79,7 @@ func todoPill(todos []session.Todo, spinnerView string, focused, pillsPanelFocus
 		if len(taskText) > maxTaskDisplayLength {
 			taskText = taskText[:maxTaskDisplayLength-1] + "…"
 		}
-		task := t.S().Base.Foreground(t.FgSubtle).Render(taskText)
+		task := t.S().Base.Foreground(styles.TC(t.FgSubtle)).Render(taskText)
 		content = fmt.Sprintf("%s %s %s  %s", spinnerView, label, progress, task)
 	} else {
 		content = fmt.Sprintf("%s %s", label, progress)
@@ -87,9 +87,9 @@ func todoPill(todos []session.Todo, spinnerView string, focused, pillsPanelFocus
 
 	style := t.S().Base.PaddingLeft(1).PaddingRight(1)
 	if !pillsPanelFocused || focused {
-		style = style.BorderStyle(lipgloss.RoundedBorder()).BorderForeground(t.BgOverlay)
+		style = style.Border(lipgloss.RoundedBorder()).BorderForeground(styles.TC(t.BgOverlay))
 	} else {
-		style = style.BorderStyle(lipgloss.HiddenBorder())
+		style = style.Border(lipgloss.HiddenBorder())
 	}
 	return style.Render(content)
 }
@@ -109,8 +109,8 @@ func queueList(queueItems []string, t *styles.Theme) string {
 		if len(text) > maxQueueDisplayLength {
 			text = text[:maxQueueDisplayLength-1] + "…"
 		}
-		prefix := t.S().Base.Foreground(t.FgMuted).Render("  •") + " "
-		lines = append(lines, prefix+t.S().Base.Foreground(t.FgMuted).Render(text))
+		prefix := t.S().Base.Foreground(styles.TC(t.FgMuted)).Render("  •") + " "
+		lines = append(lines, prefix+t.S().Base.Foreground(styles.TC(t.FgMuted)).Render(text))
 	}
 
 	return strings.Join(lines, "\n")
@@ -121,5 +121,5 @@ func sectionLine(availableWidth int, t *styles.Theme) string {
 		return ""
 	}
 	line := strings.Repeat("─", availableWidth)
-	return t.S().Base.Foreground(t.Border).Render(line)
+	return t.S().Base.Foreground(styles.TC(t.Border)).Render(line)
 }

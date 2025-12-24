@@ -1,7 +1,7 @@
 package list
 
 import (
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 	"github.com/uglyswap/crush/internal/tui/components/core/layout"
 	"github.com/uglyswap/crush/internal/tui/util"
 )

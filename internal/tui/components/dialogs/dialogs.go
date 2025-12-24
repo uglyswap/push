@@ -3,7 +3,7 @@ package dialogs
 import (
 	"slices"
 
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 	"github.com/uglyswap/crush/internal/compat/lipgloss"
 	"github.com/uglyswap/crush/internal/tui/util"
 )

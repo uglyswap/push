@@ -3,7 +3,7 @@ package util
 import (
 	"context"
 
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 	"github.com/uglyswap/crush/internal/uiutil"
 )
 

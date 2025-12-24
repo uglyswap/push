@@ -8,7 +8,7 @@ import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/viewport"
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/uglyswap/crush/internal/agent/tools"
 	"github.com/uglyswap/crush/internal/fsext"
@@ -168,15 +168,11 @@ func (p *permissionDialogCmp) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 		}
 	case tea.MouseMsg:
 		if p.supportsDiffView() && p.isMouseOverDialog(msg.X, msg.Y) {
-			switch msg.Button {
-			case tea.MouseButtonWheelDown:
+			switch msg.Type {
+			case tea.MouseWheelDown:
 				p.scrollDown()
-			case tea.MouseButtonWheelUp:
+			case tea.MouseWheelUp:
 				p.scrollUp()
-			case tea.MouseButtonWheelLeft:
-				p.scrollLeft()
-			case tea.MouseButtonWheelRight:
-				p.scrollRight()
 			}
 		}
 	}

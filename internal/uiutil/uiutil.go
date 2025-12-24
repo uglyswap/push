@@ -10,12 +10,30 @@ import (
 	"os/exec"
 	"time"
 
-	tea "charm.land/bubbletea/v2"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 	"mvdan.cc/sh/v3/shell"
 )
 
+// CursorPosition represents a cursor position in the terminal.
+// This provides compatibility with bubbletea v2's Cursor type for v1.
+type CursorPosition struct {
+	X, Y  int
+	Shape CursorShape
+	Blink bool
+}
+
+// CursorShape represents the shape of the cursor.
+type CursorShape int
+
+// Cursor shapes.
+const (
+	CursorBlock CursorShape = iota
+	CursorUnderline
+	CursorBar
+)
+
 type Cursor interface {
-	Cursor() *tea.Cursor
+	Cursor() *CursorPosition
 }
 
 func CmdHandler(msg tea.Msg) tea.Cmd {

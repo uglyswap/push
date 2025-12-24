@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/charmbracelet/bubbles/spinner"
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 	compat_tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 	"github.com/uglyswap/crush/internal/compat/lipgloss"
 	"github.com/uglyswap/crush/internal/oauth"

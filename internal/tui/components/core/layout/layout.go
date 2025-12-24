@@ -2,7 +2,7 @@ package layout
 
 import (
 	"github.com/charmbracelet/bubbles/key"
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/uglyswap/crush/internal/compat/bubbletea"
 )
 
 // TODO: move this to core
